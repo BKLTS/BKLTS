@@ -1,0 +1,325 @@
+&&&&&&&8.Automatic Annotation of Coral Reefs
+using Deep Learning
+A. Mahmood∗, M. Bennamoun∗, S. An∗, F. Sohel†, F. Boussaid∗, R. Hovey∗, G. Kendrick∗ and R.B. Fisher‡
+∗The University of Western Australia, Australia; email: ammar.mahmood@research.uwa.edu.au
+†Murdoch University, Australia
+‡University of Edinburgh, Scotland
+Abstract—Healthy coral reefs play a vital role in maintaining
+biodiversity in tropical marine ecosystems. Deep sea exploration
+and imaging have provided us with a great opportunity to look
+into the vast and complex marine ecosystems. Data acquisition
+from the coral reefs has facilitated the scientific investigation
+of these intricate ecosystems. Millions of digital images of
+the sea floor have been collected with the help of Remotely
+Operated Vehicles (ROVs) and Autonomous Underwater Vehicles
+(AUVs). Automated technology to monitor the health of the
+oceans allows for transformational ecological outcomes by
+standardizing methods for detecting and identifying species.
+Manual annotation is a tediously repetitive and a time consuming
+task for marine experts. It takes 10-30 minutes for a marine
+expert to meticulously annotate a single image. This paper aims
+to automate the analysis of large available AUV imagery by
+developing advanced deep learning tools for rapid and large-scale
+automatic annotation of marine coral species. Such an automated
+technology would greatly benefit marine ecological studies in
+terms of cost, speed, accuracy and thus in better quantifying the
+level of environmental change marine ecosystems can tolerate.
+We propose a deep learning based classification method for coral
+reefs. We also report the application of the proposed technique
+towards the automatic annotation of unlabelled mosaics of
+the coral reef in the Abrolhos Islands, Western Australia.
+Our proposed method automatically quantifies the coral
+coverage in this region and detects a decreasing trend in coral
+population which is in line with conclusions by marine ecologists.
+Index Terms—corals, deep learning, marine images, classification,
+marine ecosystems.
+I. INTRODUCTION
+The automatic annotation of marine images allows for transformational
+ecological outcomes by standardizing methods
+to detect and identify species. It frees up experts from the
+tediously repetitive task of manual annotation. It also enables
+rapid and accurate processing of massive datasets. An ever
+expanding human activity coupled with climate change have
+severely damaged marine ecosystems, which play a key role
+in our planet’s ability to sustain life. Yet accurate automated
+technology to monitor the health of our oceans exist only on a
+limited scale. Marine scientists still have to manually annotate
+a massive amount of raw underwater imagery. This research
+aims to address this bottleneck by developing advanced deep
+learning and computer vision based models for automatic
+annotation of imagery from coral reefs.
+Rapidly increasing carbon dioxide levels in the atmosphere
+due to ever expanding human activities are posing severe
+threats to marine ecosystems in general [1] and coral reefs
+in particular [2], [3] and [4]. Increased water temperatures are
+thought to be responsible for bleaching and death of corals [2].
+Some coral species are in danger of extinction due to these
+adverse effects of pollution, industrial fishing and exploitation
+of marine resources. This has resulted in a dramatic decline
+in our planet’s marine biodiversity [5]. Today’s underwater
+video cameras mounted on AUVs are an excellent alternative
+to trawl nets, grabs and towed video surveys for remote
+monitoring of marine ecosystems as they sample along a preprogrammed
+flight path, producing geo-referenced imagery of
+the sea-floor [6]. However, analysing raw imagery to extract
+useful information is not only labour intensive, but it also
+requires an expert to manually process each image. Typically
+less than 2% of the acquired imagery ends up being manually
+annotated by a marine expert, resulting in a significant loss of
+information [7]. An accurate automatic annotation of marine
+imagery would enable automatic counting, sizing and movement
+tracking of specific marine organisms. Computer vision
+and machine learning based techniques [8] have the potential
+to automate the annotation of marine images and also reduce
+the time consumed in manual processing. The accuracy of
+these techniques depends on the availability of high quality
+expertly annotated training and testing data.
+Convolutional neural networks (CNNs) [9], also known as
+deep networks, are an important class of machine learning
+algorithms applicable, among others, to numerous computer
+vision problems. Deep CNNs, in particular, are composed of
+multiple layers of processing involving linear as well as nonlinear
+operators. To solve a particular task, the parameters of
+networks are learned in an end-to-end manner. Image representations
+extracted from deep CNNs trained on a large dataset
+such as ImageNet [10] have shown to produce a promising
+performance for diverse classification and recognition tasks
+[11], [12], [13], [14] and [15]. Spatial pyramid pooling (SPP)
+[16] and Multi-scale Orderless Pooling (MOP) [17] schemes
+have made CNNs independent of the input image size and
+robust for diverse classification and recognition applications.
+In this paper, we propose a computer vision and deep
+learning based framework for the automatic annotation of
+unlabelled coral images. This framework is based on a novel
+coral classification algorithm, which employs the powerful
+image representations of CNNs. Since we do not have ground
+truth labels for millions of coral reef images, a human expert
+978-1-5090-1537-5/16/$31.00 ©2016 IEEE
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:32:38 UTC from IEEE Xplore. Restrictions apply.
+Fig. 1: Block diagram of our proposed framework.
+is included in the loop to corroborate the accuracy of the proposed
+classification method. With the trained coral classifiers,
+we analyse the coral reefs of the Abrolhos Islands which form
+one of Western Australia’s unique marine areas. We analyse
+unlabelled coral mosaics of three sites of this coral reef from
+two years.
+The main contributions of this paper include: (1) a method
+to learn features using a CNN for coral reef classification; (2)
+automatic annotation of unlabelled coral images and mosaics
+from the Abrolhos Islands in Western Australia; (3) coral
+population analysis for these mosaics.
+II. RELATED WORK
+In 2010, Collaborative and Automated Tools for the Analysis
+of Marine Imagery and Video (CATAMI)[18] was initiated
+in Australia. It introduced a new classification system to ensure
+that consistent names are given to the marine species seen in
+underwater images. However, this system does not actually
+automate the data analysis. It just streamlines the project by
+facilitating manual data entry and provides a standard protocol
+for assigning ground truth labels. Previous research ([7], [19],
+[20], [21] and [22]) have highlighted the potential of using
+computer vision based techniques for the automatic annotation
+of benthic data. However, this is an uphill task given the factors
+such as changing water turbidity, ambiguous class boundaries
+and underwater color degradation.
+III. PROPOSED METHOD
+The proposed method is outlined in Fig. 1. The training
+image set consists of images from multiple locations in
+Western Australia, a subset of Benthoz15 dataset [23]. These
+images are used to train a deep network which then classifies
+unlabelled images and mosaics. Marine experts are included
+in this pipeline to give feedback on the classification accuracy.
+The best performing classifier is then used to generate coral
+maps from the mosaics of the Abrolhos Islands. Next, we
+explain the key components of the proposed method in the
+following subsections.
+A. Classification Process
+Image representations extracted from deep neural networks,
+trained on large datasets such as ImageNet [9] and fine tuned
+on domain specific datasets, have shown state-of-art performance
+in numerous image classification problems [14]. The
+activation vectors of the first fully connected layer of a pretrained
+VGGnet [24] are employed as feature representations
+in our work. The weights of this deep network are fine tuned
+using the Benthoz15 dataset [23] which consists of expertannotated
+and geo-referenced marine images from Australian
+seas.
+It is a common practice in marine imagery to annotate the
+images with pixel labels. Each training image has 50 pixels
+marked with corresponding ground truth labels. State-of-art
+deep learning architectures take an input image of fixed size
+and hence image or patch ground truth labels are required. To
+overcome this bottleneck, square patches were extracted with
+the labelled pixel at their centre. There is no restriction on the
+size of these patches. Instead of using the whole image for
+training, we extracted patches at multiple scales centred around
+the given labelled pixels. We achieved higher classification
+accuracy when multi-scale patches were used instead of just
+one fixed size. This technique is termed as spatial pyramid
+pooling (SPP) [16]. This patch extraction method makes the
+resulting features scale invariant. A 2-layered neural network
+was then used to classify corals from non-corals. More details
+on the classification process are given in our previous work
+[25].
+B. Unlabelled Mosaics and Coral Maps
+The unlabelled images and mosaics from the Abrolhos
+Islands were annotated with the best performing trained coral
+classifier. We analysed mosaics of three different sites of the
+Abrolhos Islands spanning an area of 625 sq. meters each for
+years 2010 and 2013. Fig. 2 shows the path followed by the
+Sirius AUV [23] to capture the coral reef and some sample
+images. A marine expert was added in the loop to validate the
+labels assigned by this classifier. After validation, the coral
+mosaics of each site were analysed to investigate the changes
+in the coral population. We focused on generating coral maps
+for these sites to investigate the health of coral population for
+each site over a period of three years. These coral maps were
+automatically generated by our classifier and provide useful
+insight for quantifying the population changes of the reef.
+Marine experts were included in the pipeline to corroborate
+and comment on the authenticity of these maps.
+IV. EXPERIMENTS AND RESULTS
+A. Benthoz15 Dataset
+This Australian benthic data set (Benthoz15) [23] consists
+of an expert-annotated set of georeferenced benthic images and
+associated sensor data, captured by an autonomous underwater
+vehicle (AUV) around Australia. The whole dataset contains
+407,968 expert labelled points, on 9,874 distinct images collected
+at different depths from nine sites around Australia
+over the past few years. There are almost 40 distinct class
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:32:38 UTC from IEEE Xplore. Restrictions apply.
+Fig. 2: The path traversed by the Sirius AUV over the 3 years near the Abrolhos Islands in WA and sample images. Latitude=28
+degrees 48 minutes South. Longitude = 113 degrees and 57 minutes East.
+Site Survey Year # of Labels # of Images
+Abrolhos Islands 2011, 2012, 2013 119,273 1,377
+Rottnest Island 2011 63,600 1,272
+Jurien Bay 2011 55,050 1,101
+TABLE I: WA subset of Benthoz15 in numbers.
+labels in this dataset which make it quite challenging. Table. I
+details some statistics of the Western Australia (WA) subset of
+this dataset. We have used a subset of this dataset containing
+images from Western Australia (WA) to train our classifier.
+This subset consists of 4,750 images with 237,500 expertannotated
+points collected over a span of 3 years (2011 to
+2013).
+B. Pre-processing
+We applied color channel stretch on each image in the
+dataset. We calculated the 1% and 99% intensity percentiles
+for each color channel. The lower intensity was subtracted
+from all the intensities in each respective channel and the
+negative values were set to zero. These intensities were then
+divided by the upper percentile. The resulting intensities
+achieved a better performance compared to the original ones.
+C. Classification Experiments and Results
+Selecting patch sizes that give the best classification accuracy
+is an important step. We trained our classifier using
+multiple patches at different scales and achieved the best
+performance when these three patch sizes were used: 28×28,
+224×224, and 448×448. These correspond to small, medium
+and large scales. Feature extraction at different sizes insures an
+efficient encoding of coral species independently of their size.
+28x28
+224x
+224
+448x
+448
+VGGnet
+Max-pooling
+Spatial
+Pyramid
+2 Layer MLP
+Coral
+Non-
+Coral
+Fig. 3: Block diagram of the proposed classification method.
+The image representations extracted at these three scales were
+then max-pooled to retain the most prominent information
+which is present in the neighbourhood of a labelled pixel.
+These multi-scale deep features were used to train a Multi
+Layer Perceptron (MLP) network for classification. This network
+consists of two fully connected hidden layers of neurons
+followed by an output layer with 2 nodes: corals and noncorals.
+The number of neurons in the hidden layers were
+optimized for maximum performance. Fig. 3 shows the block
+diagram of our proposed classification method.
+We conducted three experiments to evaluate our classifier:
+(i) the classifier was trained on two-thirds of the images from
+the year 2011 and tested on the remaining images from the
+same year, (ii) the images from year 2011 were used for
+training and the images from 2012 and 2013 constitute the
+test set, (iii) the training set consisted of two-thirds of the
+images from the years 2011, 2012 and 2013, whereas the test
+set consists of all the remaining images from the same years.
+Table. II shows the details and reports the preliminary results
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:32:38 UTC from IEEE Xplore. Restrictions apply.
+Experiment # of Training Samples # of Test Samples Accuracy
+Exp 1: Train and test
+on 2011 108,000 53,000 97.00%
+Exp 2: Train on 2011 and
+test on 2012 and 2013 108,000 130,000 92.45%
+Exp 3: Train and test on
+2011,2012 and 2013 157,173 80,750 95.33%
+TABLE II: Overall classification accuracies for different
+experiments
+Site Coral Coverage in 2010 Coral Coverage in 2013
+1 95% 79%
+2 82% 53%
+3 96% 74%
+TABLE III: Coral coverage of three sites of the Abrolhos
+Islands for years 2010 and 2013.
+of coral classification on Benthoz15 dataset. We achieved a
+classification accuracy greater than 90% in all of our experiments.
+The best performance is achieved when the training and
+testing sets contain images from the same year. The performance
+dropped when the experiments were done across
+multiple years. This illustrates the difficulty encountered when
+the training and test set have images from different years.
+The main reason being the changes occurring in the coral
+reefs with time. The major causes of misclassification were:
+the ambiguous boundaries between corals and non-corals,
+dead corals (non-coral species start covering corals) and the
+abundance of non-coral labels in the dataset.
+D. Coral Population Analysis
+For the coral population analysis of the Abrolhos Islands,
+we automatically annotated the unlabelled mosaics using our
+best classifier. Outputs were validated by a marine expert
+as ground-truth labels were not available. Coral cover maps
+were then generated using the best performance classifier
+for years 2010 and 2013, and percentage coral cover was
+calculated for each site and year. Results of this analysis
+reveal a decline in coral cover at all three from 2010 to
+2013. This loss of corals was expected as an acute warming
+event occurred in 2011 which resulted in significant coral
+bleaching. Importantly, the magnitude of decline reported here
+is comparable to those previously reported across a similar
+time period for the Abrolhos Islands from imagery annotated
+by marine experts, with an average decline in coral cover
+from 73% to 59% across multiple sites [3]. The ability to
+efficiently report coral response to particular impacts (such as
+intense warming events) or gradual environmental change, is
+crucial for implementing appropriate management strategies
+[4]. Our initial results indicate that the combination of AUVs
+and automated image analysis have the capacity to improve our
+efficiency of transferring information to managers and policy
+makers.
+V. CONCLUSION
+In this work, we applied pre-trained CNN image representations
+extracted from VGGnet to a coral reef classification
+problem. We investigated the effectiveness of our trained classifier
+on unlabelled coral mosaics of the Abrolhos Islands. We
+analysed the coral reef of the Abrolhos Islands to investigate
+the trends in coral population. We generated coral maps for
+this region and quantified the coral population automatically.
+Our framework detected the decreasing trend in the coral
+population of this region as well. The proposed framework is
+an important step towards investigating the long-term effects
+of environmental change on the effective sustenance of marine
+ecosystems automatically.
+ACKNOWLEDGMENT
+This research was partially supported by Australian Research
+Council Grants (DP150104251 and DE120102960) and
+the Integrated Marine Observing System (IMOS) through the
+Department of Innovation, Industry, Science and Research (DIISR),
+National Collaborative Research Infrastructure Scheme.
+The authors also acknowledge NVIDIA for providing a Titan-
+X GPU for the experiments involved in this research.

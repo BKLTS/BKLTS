@@ -1,0 +1,349 @@
+&&&&&&&6.Vision Based Underwater Environment Analysis: A Novel
+Approach to Estimate Size of Coral Reefs
+A.Maurya1, R.Govekar1, Pramod Maurya2and Anirban Chaterjee2
+1National Institute of Technology, GOA, India
+2National Institute of Oceanography, GOA, India
+abhishek11.maurya1997@gmail.com, rajatgovekar@gmail.com, maurya@nio.org,
+snanirban@nitgoa.ac.in
+Abstract—The purpose of our work is to detect and estimate the size of underwater
+coral reef from image frames using vision based technique. Deep learning
+architecture is proposed to detect the coral reefs. To extract the frames and build
+data set, real time underwater video is used. The size of reef is estimated using
+distance-based algorithm with detected coral information. A nonlinear function is
+formulated and optimized to get accurate reef size as pixels taken by it in image
+changes with distance. This algorithm can also be used for real-time analysis of the
+underwater environment. It is evident from the analysis results and comparison with
+actual data that the proposed method is accurate in estimating the area occupied by
+underwater coral reefs.
+Index Terms— Coral Reef, Deep Learning, Nonlinear, Distance-based
+1. Introduction
+Coral reefs are one of the world’s most
+biological marine ecosystems. Coral reefs,
+ecologically species diversity and bio
+productivity in the ocean are important because
+they are the counterpart to tropical rain forests.
+Since the past decades it is increasingly at risk
+of the wide diversity of animal and plant species
+contributing to their system and its genetic
+heritage. Coral reef allows for the formation of
+associated ecosystems, which enable basic
+habitats, fish and livelihoods to be created.
+Therefore, it is important to monitor the coral
+reef ecosystem. The automated analysis
+process for underwater visuals would enhance
+the investigation of coral reef dynamics and
+processes through reduction of the analytic
+bottleneck and the full use of large submarine
+image data sets by researchers.
+Using vision-based technique, analysis of
+underwater environment can easily be
+performed getting great accuracies. One of the
+deep learning architectures, MobileNet SSD
+(Neural Network Architecture) is used for
+detection of underwater coral reefs from image
+frames. Depth wise convolution is used in
+978-1-7281-5326-1/19/$31.00 ©2019 IEEE MobileNet architecture, helps in fast
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:31:26 UTC from IEEE Xplore. Restrictions apply.
+A.Maurya et al .:Vision Based Underwater Environment Analysis: A Novel Approach to Estimate Size of Coral Reefs 175
+processing of high quality image taken from
+GoPro Hero4 camera. Base MobileNet Layers,
+used as feature extractor converts image pixels
+to features that describes the image content.
+SSD, a single-shot multicategory detector is
+faster than previous state-of -the-Art single-shot
+detectors (YOLO). SSD layers of the Neural
+network responsible for predictions of bounding
+boxes.
+Image Enhancement of frames becomes
+important as quality of images are different with
+varying depth and hence increases accuracy of
+detection. Using Image frames Pixel per metric
+ratio of it with different distance is used to
+estimate the size of coral reef, taking nonlinear
+parameters into consideration.
+2. Detection of Coral Reef
+using MobileNet SSD
+Figure 1 shows method of detection of
+underwater coral reefs.
+Fig. 1. Methods of detection of underwater coral reefs
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:31:26 UTC from IEEE Xplore. Restrictions apply.
+176 ©2019 IEEE PROCEEDINGS OF SYMPOL-2019
+2.1 Pre-processing of Data
+Parameters of image acquisition are
+important for coral reef size estimation.
+Processing of Image frames is required for
+enhancing the accuracy of detection after
+training of neural network.
+2.1.1 Image Acquisition
+Underwater environment was captured at an
+approximate height of 3.5 ft. by taking video
+using GoPro hero 4 camera.
+There are sand patches, fish and various
+types of living coral reefs in this environment.
+Images were taken using the OpenCV library in
+Python to extract the frames from the video.
+Extraction was done at 2 frames per second to
+avoid overlapping the same images.
+2.1.2 Image Enhancement
+High frequency components in image are
+enhanced by increasing the contrast of all
+frames thus increasing detailing. Image frames
+are then Histogram Equalized for red, blue and
+green component before features are extracted
+from them.
+2.2 Detection using Processed data
+Using convolution neural network
+architecture, sand patches and coral reefs are
+detected. It has been found that MobileNet is
+best suited for underwater imaging [1]. The
+MobileNet model is based on depth-separable
+convolutions, a form of factorized convolutions
+that factor a standard convolution into a
+depthwise convolution and a convolution called
+a pointwise convolution. The standard
+convolution layer is parameterized by the
+convolution kernel, where spatial dimension of
+the kernel is supposed to be square with number
+of input channels and N number of output
+channels.
+The architecture for MobileNet is defined in
+Table 1. ReLU nonlinearity follows all layers
+except the final fully connected layer that has no
+nonlinearity and feeds into a classification
+softmax layer. Down sampling is handled in
+both the depth convolutions and the first layer
+with strided convolution. A final average
+pooling in front of the fully connected layer
+reduces the spatial resolution to 1.
+(a) (b)
+Fig. 2. Different convolution layers. (a)
+Standard convolution layers. (b)
+Depthwise separable convolution
+layers.
+3. Flowchart of Coral reef Size
+Estimation
+Figure 3 shows the detailed flowchart of
+size estimation of coral reef. Normalized
+coordinates are pixel values of detection boxes
+in an image frame.
+3.1 Detailed Steps of Size estimation
+i. Normalized pixels obtained are
+converted to absolute pixels.
+ii. Pixels covered by object in length and
+width is found using the information of
+absolute pixel.
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:31:26 UTC from IEEE Xplore. Restrictions apply.
+A.Maurya et al .:Vision Based Underwater Environment Analysis: A Novel Approach to Estimate Size of Coral Reefs 177
+iii. Sigmoidal 5PL function (Equation 1) is
+applied on the values of Pixel per metric
+with different distance.
+iv. The function is optimized and values of
+constants are obtained such that curve is
+fitted accurately.
+v. Accurate Pixel per metric ratio is
+obtained for desired Distance.
+vi. Size of object is obtained using the
+information of pixels covered and pixel
+per metric obtained using Equation 1.
+Fig. 3. Detailed flowchart of size
+estimation of coral reef
+4. Coral Reef Size Estimation
+In Underwater environment, area covered
+by coral reefs are estimated by estimating the
+size and area of each detected coral patch
+using information of pixels taken by patch and
+pixel per metric ratio.
+4.1 Using Pixel per Metric Ratio
+After coral reef detection, neural network
+coordinates were used to create a bounding
+box around coral detected. Standardized
+coordinates are changed to absolute pixel
+values by multiplying coordinates with size of
+image given as input to neural network for
+training. ‘X’ coordinate is multiplied by ‘400’
+and ‘Y’ coordinate is multiplied by ‘300’.
+Number of pixels occupied by the coral’s
+length and breadth is found using set of
+absolute pixel values. Different samples were
+taken with different distances, from an object
+underwater and the pixel values are obtained.
+Using pixel values and object size in cm scale,
+pixel per metric ratio (number of pixels in one
+cm) is calculated.
+4.2 Formulation and Optimization
+Using the obtained Pixel per Metric values,
+a nonlinear function is formulated and
+optimized accordingly as shown in Figure 4.
+Fig. 4. Variation of pixel per metric
+ratio with distance.
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:31:26 UTC from IEEE Xplore. Restrictions apply.
+178 ©2019 IEEE PROCEEDINGS OF SYMPOL-2019
+Formula used for Fitting:
+y = 􀭢􀬾(􀭟􀬿􀭢)
+(􀬵 􀬾 (􀱮
+􀱙) 􀱘)􀱣 (1)
+The Five Parameter Logistic Regression or
+5PL nonlinear regression model is widely used
+for curve-fitting analysis [4]. It is defined by the
+classic "S" or sigmoidal form that matches the
+curve's bottom and top plateaus, the EC50 and
+the slope factor (the slope of Hill). This curve is
+symmetrical about its point of inflection. The
+5PL formula adds an additional parameter to
+expand the model to accommodate curves that
+are not symmetrical, quantifying the
+asymmetry. The 5PL equation parameters are:
+A = Minimum asymptote. In a bioassay
+where you have a standard curve, this can be
+thought of as the response value at 0 standard
+concentration.
+B = Hill's slope. The Hill's slope refers to the
+steepness of the curve. It could either be
+positive or negative.
+C = Inflection point. The inflection point is
+defined as the point on the curve where the
+curvature changes direction or signs.
+D = Maximum asymptote. In a bioassay
+where you have a standard curve, this can be
+thought of as the response value for infinite
+standard concentration.
+M = Asymmetry factor. When M=1 we have
+a symmetrical curve around inflection point and
+so we have a four-parameter logistic equation.
+Obtained value after optimization:
+a=20.7794; b= 32.8038; c= 10.5057; d=
+0.023534; m= 0.0276115.Real object size is
+obtained using Equation 2.
+Object size(cm) = Object size(pixels)
+Pixels per metric
+(2)
+5. Result and Discussions
+Dataset for images was created by
+extracting the image frames from underwater
+videos taken with known height. Results of
+training of Neural Network and testing of it
+were obtained as follows:
+ Total Images in Dataset – 4000.
+ Training Set- 70%, Testing Set- 15%
+ Validation Method- Revalidation,
+ Validation Set - 15%,
+ Average Training accuracy of images
+is 100%.
+ Average Test accuracy of images is
+93%
+M. Marcos et al. [2] used feedforward
+backpropagation neural network to classify
+close-up images of coral reef components into
+three benthic categories: living coral, dead
+coral and sand, reaching a success rate of
+86.7% while their two-step classifier, on the
+other hand, reached 79.7%. A. Shihavuddin et
+al. [3] achieved overall accuracy of 85.5
+percent on the dataset of Moorea-labelled
+corals (MLC). The network used to train our
+dataset outperformed the coral reef detection
+techniques implemented in the past.
+For training the convolution neural network
+Google Collab was used. It uses 1xTesla k80
+GPU having 2496 CUDA cores having 12 GB
+GDDR5 VRAM. It uses a 1x single core hyper
+threaded i.e. (1 core, 2 threads) Xeon
+processors @ 2.3 GHz CPU. It has a 12.6 GB
+RAM. It took 2 hours to train the network.
+Figure 5 shows detection of coral reef
+patches from an underwater image frame.
+Starting from top first patch is detected with
+96% accuracy, with another two patch detected
+as 93% and 90% respectively. Fig. 6 shows
+the detected coral reef from a different data
+set. It had an accuracy of 95% signifying that
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:31:26 UTC from IEEE Xplore. Restrictions apply.
+A.Maurya et al .:Vision Based Underwater Environment Analysis: A Novel Approach to Estimate Size of Coral Reefs 179
+our trained model is accurate.
+Fig. 5. Coral reef detection
+Fig. 6. Elkhorn coral detection
+Fig. 7. Coral reef detection
+Fig. 8. Table coral detection
+Figure 7 shows the detection of Brain corals
+underwater image frame and size estimation of
+area covered by coral reef is shown in Table 1.
+First Patch shows detected reef with an
+accuracy of 95%, and second patch is detected
+with accuracy of 85%. Its Standard size ranges
+upto 1.8 m or 5.9 ft. After applying the
+proposed size estimation algorithm, the size is
+estimated as 1.72 m, which verifies our result
+correctly.
+Figure 8 shows the detected Table corals,
+species of Acropora genus which has standard
+width upto 2.2 m. With the detection of table
+coral in Fig. 8 its size is estimated as 2.48 m,
+after applying the algorithm which validates our
+result.
+Table 1 shows the analysis of coral reef
+detected in an underwater image frame, in
+terms of numerical values to find out the area
+covered by detected coral reef patches, in real
+life scenario.
+On the scale of 1920 pixels lengthwise and
+1080 breadthwise, values in Pixels Taken
+column gives the number of pixels taken by
+the detected coral reef patch. Using algorithm
+with other known parameters such as pixel per
+metric, size of coral is estimated (length and
+width). Area covered under coral reef is
+estimated by the product of length and width
+of detected coral reef patch. In this table reef
+no. 1 and 2 are from Figure 7 and reef no. 3 is
+from Figure 8.
+Table 2 shows the comparison between the
+average estimated length and actual length of
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:31:26 UTC from IEEE Xplore. Restrictions apply.
+180 ©2019 IEEE PROCEEDINGS OF SYMPOL-2019
+corals in underwater system. Average
+Percentage Error is found to be minimal after
+comparison.
+Table 1. Estimated Size of Coral Reef
+Table 2. Estimated length of coral vs actual
+length
+Coral types
+Average
+Estimated
+length (m)
+Actual
+length
+(m)
+Average
+Percentage
+Error (%)
+Brain coral
+(Figure 7) 1.75 1.8 2.77 %
+Table coral
+(Figure 8) 2.31 2.2 5%
+6. Conclusion
+Coral reef analysis in 400×300 size image
+frame is performed at 2 fps from underwater
+environment video for each second image from
+the extracted frames. In MobileNet architecture,
+detachable convolution is done before giving
+features to fully connected layers to reduce the
+complexity of extraction of features. Detected
+coral reefs provide relevant information about
+the pixels occupied longitudinally and
+breadthwise in an image used to estimate the
+size. Non-linear function, mapping the pixel
+values to the metric distance ratio is optimized
+to give the desired distance near accurate ratio
+value. The observations obtained using this
+algorithm provides the reliable values of the
+area covered in an image frame by the coral
+reefs.
+ACKNOWLEDGEMENT
+It is a great pleasure to acknowledge my
+deepest thanks and gratitude to Prof. Pramod
+Maurya, scientist of National Institute of
+Oceanography. I express my sincere heartfelt
+gratitude to Dr. Anirban Chatterjee from NIT
+Goa and all the members of NIT Goa, who
+helped me directly or indirectly during this
+course of work.

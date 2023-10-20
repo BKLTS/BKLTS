@@ -1,0 +1,87 @@
+&&&&&&&9.Surveillance of Coral Reef Development Using an
+Autonomous Underwater Vehicle
+Mohammad Fahmi Amri Bin Mohd Murad
+Centre for Artificial Intelligence & Robotics,
+Universiti Teknologi Malaysia,
+Kuala Lumpur, Malaysia
+fahmiamri92@gmail.com
+Mohamed Idzham Bin Samah
+Centre for Artificial Intelligence & Robotics,
+Universiti Teknologi Malaysia,
+Kuala Lumpur, Malaysia
+mohamedidzham@gmail.com
+Zool H Ismail
+Centre for Artificial Intelligence & Robotics,
+Universiti Teknologi Malaysia,
+Kuala Lumpur, Malaysia
+zool@utm.my
+Karl Sammut
+Centre for Maritime Engineering
+Flinders University
+Adelaide, Australia
+karl.sammut@flinders.edu.au
+Abstract—With the arrival of new robotic technologies
+such as an Autonomous Underwater Vehicle (AUV), a
+number of tasks that cannot be done by human now can be
+accomplished and bring human to reach the dangerous
+and unreachable areas. An AUV can be related to the most
+invention which can reduce human’s work using
+specialized equipment and devices that control and
+perform the particular tasks. Therefore, it is able to fulfil
+the predetermined task without any human control and to
+react against unexpected situation by its artificial
+intelligence. This paper examines the effectiveness of using
+AUV as surveillance system for coral reef ecology. We
+propose a new AUV that ease researcher or activist to
+survey the condition of coral reef ecology environment.
+Keywords—AUV; Coral Reef; morphological; ROS;
+I. INTRODUCTION
+Nowadays, technology of robotics expands in all area of
+engineering and environment expertise which focuses on an
+Autonomous Underwater (AUV). Recently, underwater
+vehicle has been used in limited number of task. With further
+research and development, underwater vehicle can reduce the
+limitation and increase the capability to do more tasks. There
+are lots of AUVs with different function and tasks operated
+worldwide. Today, most of Autonomous Underwater Vehicles
+(AUV) can be seen in military field, oiled and gas industry
+and some of the expedition to explore under the deep sea.
+However, this AUV's project focuses on an inspection of the
+coral reef ecology which is on environment expertise. Coral
+reefs are an important natural source which can be found in a
+tropical water throughout the world [1]. The condition of coral
+reef can be maintained from time to time by developing an
+AUV.
+Currently, the existing AUV used to explore a coral reef is
+still an expensive technology to be developed by researcher
+throughout the world. It can be said that it is still an expensive
+technology to be developed by researcher throughout the
+world. From this reason, this project proposes a low cost AUV
+which allows the researchers and environmental activist to use
+for their coral reef surveillance and exploration.
+II. THE GOAL OF THE AUV PROJECT
+This paper will describe the suitable design and affordable
+autonomous underwater vehicle for coral reef surveillance and
+overcome human limitation. In the end of this project, an
+AUV can be operated as surveillance system for researchers or
+environment activists.
+III. KEY DESIGN PROPOSAL
+To build an AUV, budget and technology need to be
+planed carefully. In this paper we target to ease researcher and
+activist by produce affordable autonomous underwater vehicle
+and yet have the same function as existing autonomous
+underwater vehicle that operate on coral reef sector in the
+world.
+A. Mechanical Design
+To build an Autonomous Underwater Vehicle that can
+tackle harsh environment and reach beyond human limit a
+toughest and high manueverability AUV are needed [2]. Our
+imaginary AUV will have size about 125cm long, 42cm width
+and 18cm height. Those dimension is sizeable as our AUV
+need to carry sensing and navigation instruments. This AUV
+uses a ‘torpedo’ type design which can moves up to 5 degree
+of freedom. As shown in our schematic design, our AUV
+design based on torpedo shape to make it easy to maneuver on
+challenging environment which human cannot arrive on that
+area. 5 small-yet-powerful thrusters from BlueRobotic allow
+the AUV moves in all area of the reef.

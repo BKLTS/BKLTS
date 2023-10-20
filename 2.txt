@@ -1,0 +1,453 @@
+&&&&&&&2.Detection, Localization and Classification of Fish
+and Fish Species in Poor Conditions using
+Convolutional Neural Networks
+Jesper Haahr Christensen
+DTU Electrical Engineering
+Technical University of Denmark
+AUV Competence Centre
+ATLAS MARIDAN ApS
+2960 Rungsted Kyst, Denmark
+jhc@atlasmaridan.com
+Lars Valdemar Mogensen
+AUV Competence Centre
+ATLAS MARIDAN ApS
+2960 Rungsted Kyst, Denmark
+lvm@atlasmaridan.com
+Roberto Galeazzi, Jens Christian Andersen
+DTU Electrical Engineering
+Technical University of Denmark
+2800 Kgs. Lyngby, Denmark
+rg@elektro.dtu.dk
+jca@elektro.dtu.dk
+Abstract—In this work the initial steps towards a system
+capable of parametrising fish schools in underwater images are
+presented. For this purpose a deep convolutional neural network
+called Optical Fish Detection Network (OFDNet) is introduced.
+This is based on state-of-the-art deep learning object detection
+architectures and carries out the task of fish detection, localization
+and species classification using visual data obtained by
+underwater cameras. This work is focused towards applications
+in the poorly conditioned North and Baltic Sea and is initially
+developed for the purpose of recognizing herring and mackerel.
+Based on experiments on a dataset obtained at sea, OFDNet is
+shown to successfully detect 66.7% of the fish included and
+furthermore classify 89.7% of these correctly.
+Index Terms—artificial intelligence, deep learning, convolutional
+neural networks, object detection, fish detection
+I. INTRODUCTION
+In certain marine applications such as fish monitoring or
+commercial fisheries it would be useful to have a system
+capable of automatically detect, localize and classify fish and
+fish species in images taken underwater. In monitoring tasks
+such a system could be applied for counting populations,
+distinguish species present in the area or survey the migration
+of fish. This could be in dams, streams, lakes, fish farms or at
+sea. For fishing operations, the application could be applied to
+parameterize a fish school to effectively enable an estimation
+of species distribution or numbers. From this, expected bycatch
+and discard rates may be calculated and thus present an
+option for commercial fisheries to inspect a detected school of
+fish before officially spending any quotas fishing it.
+Initially the algorithm is designed to distinguish only among
+three classes: herring, mackerel and a “catch-all” class. This
+approach is chosen to overcome issues connected with the
+availability of sufficient image material needed to train the
+algorithm. However this does not hinder future possibilities of
+extending the method to include additional species or classes
+and integrating the system into real-time environments.
+A novel data-driven approach based on current state-ofthe-
+art deep learning object detectors utilizing convolutional
+neural networks is at the core of the proposed algorithm. This
+seeks to overcome challenges in generalization of different
+environments and to become a more robust option for such
+problems rather than utilizing traditional image processing.
+A. Literature Survey
+In more recent publications [3], [4], the approach to classify
+fish into species is based on deep neural networks. In
+[4] a multi-layer neural network is utilized as classifier for
+processing already extracted features from a fish image. These
+features are based on known parameters such as size and shape
+of the fish. In [3] current state-of-the-art convolutional neural
+networks (CNNs) are utilized as both feature extractor of an
+input image as well as classifier for these extracted features.
+In [5]–[7] methods are proposed for the entire process of
+detecting and localizing fish in images as well as classifying
+detected fishes into their respective species by utilizing stateof-
+the-art object detectors based on deep regional convolutional
+neural networks (R-CNNs) for both region proposals
+and classifications.
+The work in [5] and [7] is based on a well-known, but large,
+architecture called Faster R-CNN [8]. This is currently among
+the highest achieving models for precision in object detection.
+Most referenced work for underwater fish detection and
+classification are developed for non-intrusive environments,
+i.e. the camera system is fixed to a given position. Most of
+the data presented in these publications are generally of good
+quality w.r.t. visibility, contrast and underwater conditions. The
+main targets for species classification is based and proved
+upon already available large-scale fish dataset, e.g. [9], which
+mainly contains good quality footage of tropical fish species
+and does not target specifically chosen species outside of this
+scope.
+Limitations of such automated systems for fish detection
+and classification are commonly scalability and reliability.
+Traditional image processing often fails to generalize outside
+the scope of which it has been developed and is therefore
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:21:03 UTC from IEEE Xplore. Restrictions apply.
+challenged when introduced to new environments, noise and
+more poor conditions. Large-scale data-driven models seeks
+to eliminate the effects of such variations in data but in turn
+usually requires very large annotated datasets and puts a much
+larger demand on processing power.
+B. Novelty and Contributions
+This paper contributes with the design, development and
+testing of a novel system to automatically carry out fish
+detection and localization as well as fish species classification
+on images taken underwater.
+In an attempt to overcome limitations present in current
+methods, as presented in the literature review, the main technological
+contributions are the utilization of a unified neural
+network that simultaneously performs bounding box and class
+predictions coupled together with the application area within
+poorly conditioned environments supported by the dataset
+collected for this specific purpose.
+Beyond the intended application areas and supported conditions
+of image quality, OFDNet further presents a novelty
+by being designed at a scale where real-time implementation
+on embedded platforms for autonomous underwater vehicles
+(AUVs), remotely operated vehicles (ROVs) or simply as part
+of the camera system is feasible.
+II. METHODOLOGY
+This section presents the deep learning based object detection
+meta-architecture at the core of OFDNet and the adopted
+method to establish a relevant dataset of fish images to train
+the neural network.
+A. OFDNet Architecture
+The work in [10] presents and investigates speed/accuracy
+trade-offs of current state-of-the-art object detectors. From
+here a desired state-of-the-art object detection architecture has
+been identified with requirements based on low latency and
+good precision for later to be integrated on small embedded
+processors in a real-time environment. This architecture is
+known as Single Shot Multibox Detector (SSD) [2] and uses
+the small, yet efficient, feature extractor known as MobileNet
+[11]. Both the object detection architecture and the feature
+extractor are based on deep convolutional neural networks.
+The SSD architecture, as shown in Fig. 1, consists of a
+single unified network that simultaneously predicts bounding
+boxes and box labels with confidence values. This is
+inspired by MultiBox [12] which is a technique used for fast
+class-agnostic bounding box predictions. This eliminates the
+computational overhead from commonly used region proposal
+networks or other region search methods; therefore it is much
+faster proven with a small decrease in accuracy. The original
+work of SSD utilizes VGG-16 [1] as feature extractor, however
+in this work MobileNet is utilized instead.
+For identifying regions of interest (ROIs) in the image, a
+set of predefined boxes are used to evaluate the feature map.
+In addition to this, the network extends the MobileNet feature
+extractor with additional layers from which predictions are
+combined. This introduces a natural handling of objects in
+various sizes that complements the use of the predefined boxes
+of different sizes and aspect ratios. Unlike methods presented
+in the literature review, SSD does not use a set of fully
+connected layers to predict class labels or box regressions.
+Instead, it employs a set of 3×3 convolutional filters at each
+output feature map. This produces the softmax output for class
+categories and the regression targets for box offsets.
+B. Data Collection
+For training the model presented above, a very large dataset
+containing annotated images with the objects of interest is
+required. As such a dataset for the purpose of fish detection
+in the North and Baltic sea is not available, an underwater
+data acquisition system has been developed. This enabled
+the possibility of acquiring visual data of herring, mackerel
+and “other species” fish at Danish aquariums. Fig. 2 shows
+the developed system recording data of herring at Fiskeri- &
+Søfartsmuseet in Esbjerg, Denmark.
+Through three data acquisition campaigns a total of 13 124
+images have been acquired and annotated. This dataset in total
+contains 4593 fish distributed across herring, mackerel and
+“other species” on multiple locations.
+Fig. 1. Architecture of the single shot multibox detector. This produces bounding box predictions and class labels with a single feed forward network. Note:
+The original paper presents the architecture with a VGG-16 [1] feature extractor. This could be any feature extractor and in the case of this work MobileNet
+is used. Source: [2].
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:21:03 UTC from IEEE Xplore. Restrictions apply.
+Fig. 2. The developed underwater data acquisition platform recording data of
+a school of herring circulating an aquarium at Fiskeri- & Søfartsmuseet in
+Esbjerg, Denmark.
+Each image was annotated by the means of a bounding box
+encapsulating each fish along with a label. This process was
+partly done manually using the LabelImg tool [13] and partly
+automatically using a sparsely trained neural network.
+III. TRAINING
+OFDNet produces output in six different layers using the
+3 × 3 convolution filters. The classification output in all six
+layers are modified such that the network complies with the
+3 + 1 classes used in this work, where the additional class is
+the background. The predefined boxes are scale-wise applied
+in each associated output feature map. This efficiently handles
+different object scales in the input image and seeks to mimic
+the effect from handling the input image at different scales.
+The scale sk of the default boxes for each considered feature
+map is computed as
+sk = smin +
+smax − smin
+m − 1
+(k − 1), k∈ {1, 2, . . . , m} (1)
+where smin = 0.2, smax = 0.95 and m = 6 is the number of
+different scales. This generates six equally spaced boxes such
+that the lowest feature layer has a scale of 0.2 and the highest
+layer has a scale of 0.95. The aspect ratios of the default boxes
+are ar ∈ {1, 2, 3, 1
+2 , 1
+3}. In the convolutional layers Conv4_3,
+Conv10_2 and Conv11_2 (see. Fig. 1) are aspect ratios of
+1
+3 and 3 omitted. The default boxes can be visually interpreted
+as shown in Fig. 3.
+During training time, images are augmented to increase the
+samples in the dataset by random horizontal flips and random
+patch cropping. Patch cropping samples a patch of size [0.1, 1]
+of the original image size with an aspect between 1
+2 and 2. This
+drastically improve the detection of smaller objects, as shown
+Fig. 3. Visualization of the default boxes chosen for OFDNet utilizing the
+SSD architecture.
+in [2]. The remaining hyper-parameters used for training are
+given in Table I.
+The overall training objective is to minimize a combined
+loss index accounting for classification confidence and bounding
+box regression. This multi-objective loss index L is defined
+as
+L(p, u, tu, v) = Lcls(p, u) + [u ≥ 1]Lloc(tu, v) (2)
+where p is the softmax probability of the evaluated ROI
+belonging to true class u. [u ≥ 1] evaluates to 1 when u ≥ 1
+such that the catch-all background class, u = 0, is not
+considered.
+For classification loss Lcls a natural logarithmic loss is used
+as Lcls(p, u) = −log(pu) where the softmax probability pu is
+defined as
+σ(z)j =
+ezj
+ny
+i=1 ezi
+, ∀j ∈ {0, 1, . . . , ny}. (3)
+for the output layer z and j output classes from 0 (background)
+to ny.
+For regression (localization) loss Lloc the smoothL1 loss
+function [14] is used
+smoothL1 (x) =
+
+0.5x2 if |x| < 1
+|x| − 0.5 otherwise
+(4)
+over a tuple of regression targets for the class u, v =
+(vx, vy, vw, vh), and a predicted tuple tu = (tux
+, tuy
+, tu
+w, tu
+h)
+where (x, y) is the centre position, and w and h is the width
+and height respectively. Both the center point (x, y) and the
+TABLE I
+HYPER-PARAMETERS FOR TRAINING THE SSD ARCHITECTURE OF OFDNET.
+Architecture
+Feature
+extractor
+Input size Batch size as
+1
+ar
+2 Optimizer LR3
+SSD MobileNet
+300
+×
+300
+24
+{0.2, 0.35,
+0.5, 0.65,
+0.8, 0.95}
+{1:1, 2:1,
+3:1, 1:2,
+1:3}
+Momentum
+γ = 0.9 0.0004
+1Anchor scales. 2Anchor aspect ratios. 3Learning rate.
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:21:03 UTC from IEEE Xplore. Restrictions apply.
+0 5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85
+0
+0.5
+1
+1.5
+2
+2.5
+3
+3.5
+4
+4.5
+5
+5.5
+Loss
+a
+0 5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85
+0
+0.1
+0.2
+0.3
+0.4
+0.5
+0.6
+0.7
+0.8
+0.9
+1
+Precision
+b
+Fig. 4. Training of OFDNet: (a) loss during training, (b) precision.
+width w and height h are represented as offsets to the default
+bounding box size.
+To further increase the accuracy of OFDNet and overcome
+commonly known challenges from utilizing a sparse dataset,
+the strategy of transfer learning has been adopted. Here the
+feature extractor is first trained on the ImageNet database [15]
+containing more than 14 million images in 1000 different class
+categories. Next the full object detection model is trained on
+the Microsoft Common Objects In Content (MS COCO) [16]
+database. From this, very good and general filters are obtained
+in which the weights are transferred to OFDNet and then finetuned
+to the purpose of herring, mackerel and “other species”
+detection, localization and classification.
+The fully trained OFDNet is evaluated using the metrics of
+mean average precision (mAP) which is the commonly used
+evaluation metrics for object detectors defined in [17]. OFDNet
+achieves a mAP of 0.55 distributed as average precisions
+(AP) on the three class categories as: herring AP = 0.47,
+mackerel AP = 0.41 and “other species” AP = 0.77.
+The training process is shown in Fig. 4. The precision
+initially converges at 10 000 steps with a high loss. To guard
+against local minima during gradient descent, the learning
+rate is altered for a few thousand steps and then set back
+to its initial value (cf. Table I). At 75 000 steps, the precision
+converges again and the overall loss is now much lower.
+a
+b
+c
+Fig. 5. Three samples evaluated by OFDNet. Detected fish are shown with
+coloured bounding boxes along with a confidence and class label. Blue is
+mackerel, green is herring and cyan is “other species”. The white boxes shows
+the annotated ground truth bounding box.
+IV. VALIDATION
+To inspect the validity of OFDNet some samples from the
+evaluation dataset are evaluated as shown in Fig. 5. Most of
+the fish initially annotated, with a few exceptions, are detected
+by the network and correctly classified.
+Other methods present ways to peer into the trained network
+to diagnose attentions and assess whether the network is
+over/underfitting the dataset. First, some learned filters within
+the network can be visualized to reveal the validity of the
+type of input patterns or features detected. Three examples
+of this are shown in Fig. 6a–6c, which illustrates how the
+filters evolves towards more complex states and the patterns
+resembles eyes, heads or contours of fishes. Fig. 6d shows an
+image generated by investigating which input maximizes the
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:21:03 UTC from IEEE Xplore. Restrictions apply.
+a b c d
+Fig. 6. Visualized filters from the trained neural network. (a)–(c) shows how the filters evolves from the early layers to the deeper layers in the network. (d)
+shows the activation maximization of one of the output classes of the network.
+Fig. 7
+Fig. 8. Example of an activation map calculated for regions in the input image
+where OFDNet detected fish.
+output of all filters towards one of the output classes in the
+network. Here it can be clearly seen that this resembles parts
+of fish in many different orientations.
+Activation maps as proposed in [18], also known as attention
+maps or heatmaps, uses the final feature map instead of the
+final output of the network. This retrieves spatial information
+that gets lost in the dense layers. Activation maps enable
+visualizing and exploring exactly which regions of an input
+image supports the prediction with respect to the output. A
+sample of this is shown in Fig. 7, where the network focus on
+different regions of the fish such as fins, head, top and bottom.
+If the network had overfitted to environmental features or by
+other means failed to learn relevant features, the attention maps
+would show highest score for non-fish-related regions in the
+input image.
+V. EXPERIMENTS
+For experimental purposes in unexplored real-world conditions
+at sea, a dataset consisting of images of fish in the
+Weser river in Bremen, Germany, and in the Baltic Sea off
+the coast of R¨ugen, Germany, has been collected. The dataset
+includes a total of 97 fishes distributed among herring and
+“other species” of which the overall quality of the images
+is drastically decreased compared to the initial dataset used
+for training OFDNet. The visibility in the water is at best 30-
+40 cm and the low-light conditions introduce extensive motion
+blur.
+Given that OFDNet has been trained on good condition
+aquarium data that do not include such harsh real-world
+conditions, it obtains a 0.21 mAP and successfully detects
+44.8% of the fish included in the dataset. Furthermore, within
+these detected fishes it classifies 23.1% as belonging to the
+correct class category, i.e. either a herring, mackerel or “other
+species”.
+To increase the detection and classification performance in
+sea conditions, and to investigate the capability of OFDNet
+to learn and generalize in such environment, 17 data samples
+obtained at sea are introduced into the initial training dataset.
+This generates a sparse representation of the conditions and
+data distribution of real-world data in which OFDNet will seek
+to extract features and learn from. The 17 samples are not
+included in the evaluation set and have been manually chosen
+to have minimum correlation with the evaluation set.
+By retraining OFDNet on the extended training dataset, the
+performance on the real-world dataset is drastically improved.
+OFDNet obtains a 0.56 mAP and successfully detects 66.7%
+of the fishes included in the dataset and furthermore classifies
+89.7% of these correctly. This shows that OFDNet is capable
+of learning from new and previously unexplored environments,
+which are defined in a much more difficult state than the initial
+dataset.
+Fig. 9 shows three images from the real-world dataset
+evaluated by OFDNet. Here the low visibility and motion blur
+are clearly identified, however OFDNet remains capable to
+corretly detect and classify fish for these samples.
+VI. CONCLUSION
+The paper presented the design of an algorithm for detection,
+localization and classification of fishes and fish species
+in murky water conditions typical of the Baltic and North
+Sea. The algorithm is composed by a neural network called
+OFDNet based on the architecture of a low-latency state-ofthe-
+art deep learning object detector.
+The collected dataset is successfully utilized for training
+OFDNet with the purpose of performing fish detection,
+localization and fish species classification. During training,
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:21:03 UTC from IEEE Xplore. Restrictions apply.
+a
+b
+c
+Fig. 9. Experimental results from evaluating OFDNet with herring data
+obtained in the Baltic Sea off the coast of R¨ugen in Germany (a) and (b), and
+data obtained of “other species” in the Weser in Bremen, Germany (c).
+OFDNet is shown to deliver good results both in terms of
+localization and classification of the three principal classes:
+herring, mackerel and “other species”. OFDNet is further
+validated on data obtained during sea-trials whose image
+quality is affected by low illumination and murky conditions.
+On this dataset OFDNet successfully detects 44% of the fish
+present in the samples, and it classifies 23.1% of the detected
+fish into the correct class category.
+To prove the major advantage of using data-driven models
+over traditional image processing algorithms, the training
+dataset is extended with few samples from the real-world
+dataset generating a very sparse representation of the previously
+unknown real-world environment. After retraining OFDNet,
+the detection and classification performance is drastically
+improved with 66.7% of detection and 89.7% of correct
+classification.
+ACKNOWLEDGMENT
+This work was supported by Patrizio Mariani from the
+National Institute of Aquatic Resources of DTU, ATLAS
+MARIDAN ApS and by Max Abildgaard from ATLAS ELEKTRONIK
+GmbH in Bremen, Germany. Thanks to colleagues
+who have contributed to the work, in particular Marco Jacobi,
+Morten S. Nielsen, Martin C. Rotne and Claus Eriksen.

@@ -1,0 +1,439 @@
+&&&&&&&10.Development of an Efficient Coral-Coverage Estimation Method Using a Towed
+Optical Camera Array System [Speedy Sea Scanner (SSS)] and
+Deep-Learning-Based Segmentation: A Sea Trial
+at the Kujuku-Shima Islands
+Katsunori Mizuno , Kei Terayama, Shigeru Tabeta, Shingo Sakamoto, Yoshinori Matsumoto, Yusuke Sugimoto,
+Toshihiro Ogawa, Kenichi Sugimoto, Hironobu Fukami, Masaaki Sakagami, Mayumi Deki, and Akihiro Kawakubo
+Abstract—Various methods have been developed and used for monitoring
+marine benthic habitats, such as coral reefs and seagrass meadows.
+However, the efficiency of general survey methods [e.g., line intercept
+transects and autonomous underwater vehicles (AUVs)] still is not high.
+In this article, we propose a practical coral-coverage estimation method
+combining an effective survey system [Speedy Sea Scanner (SSS)] and a
+deep-learning-based estimation method. The SSS is a towed-type system
+with six cameras arrayed on the platform. The depth rating of the system
+in our trial was 50 m. The length of the array baseline was 4.4 m, and
+six cameras were placed on the platform with equal spacing. The sea
+trial was conducted at Kujuku-Shima, Japan, on September 30, 2017. We
+successfully generated 3-D models and high-quality orthophotos of the
+seafloor with high resolution of about 1.5 mm/pixel. The survey efficiency
+of the SSS was about 7000 m2/h. In addition, the experimental results of
+coral-coverage estimation showed that the corals can be distinguished with
+accuracy of about 80% in places with relatively high transparency, and the
+error of coverage estimation was 10% or less. The proposed coral-coverage
+estimation method is more efficient than other survey techniques and costs
+less than AUV surveying; therefore, it is expected to become a promising
+tool for marine environmental surveying.
+Manuscript received August 30, 2018; revised April 1, 2019 and July 16,
+2019; accepted August 27, 2019. Date of publication October 8, 2019; date
+of current version October 13, 2020. This work was supported in part by the
+Aid for Young Scientists A (17H04974), in part by the Japan Society for the
+Promotion of Science (JSPS), in part by theACT-I Japan Science andTechnology
+Agency (JSPS) under Grant JPMJPR16UJ, and in part by the Kurita Water and
+Environment Foundation. This work was presented in part at the MTS/IEEE
+OCEANS Conference, Kobe, Japan,May 28–31, 2018. (Corresponding author:
+Katsunori Mizuno.)
+Associate Editor: J. Cobb.
+K. Mizuno and S. Tabeta are with the Department of Environment Systems,
+Graduate School of Frontier Sciences, The University of Tokyo, Kashiwa 277-
+8561, Japan (e-mail: kmizuno@edu.k.u-tokyo.ac.jp; tabeta@edu.k.u-tokyo.
+ac.jp).
+K. Terayama is with the RIKEN Center for Advanced Intelligence Project,
+Chuo-ku 103-0027, Japan, and alsowith theGraduate School of Medicine,Kyoto
+University, Kyoto 277-8501, Japan (e-mail: terayama.kei.8e@kyoto-u.ac.jp).
+S. Sakamoto, Y. Matsumoto, Y. Sugimoto, T. Ogawa, and K. Sugimoto
+are with the Windy Network Corporation, Shizuoka 422-8006, Japan (e-mail:
+s-sakamoto@windy-net.co.jp; y-matsumoto@windy-net.co.jp; y-sugimoto@
+windy-net.co.jp; ogawa@windy-net.co.jp; sugimoto@windy-net.co.jp).
+H. Fukami is with the Faculty of Agriculture, University of Miyazaki,
+Miyazaki 889-2192, Japan (e-mail: hirofukami@cc.miyazaki-u.ac.jp).
+M. Sakagami is with the Graduate School of Human and Environmental
+Studies, Kyoto University, Kyoto 606-8501, Japan (e-mail: sakagami.masaaki.
+6x@kyoto-u.ac.jp).
+M. Deki and A. Kawakubo are with the Saikai National Park Kujukushima
+Aquarium, Sasebo 858-0922, Japan (e-mail: m-deki@pearlsea.jp;
+a-kawakubo@pearlsea.jp).
+Digital Object Identifier 10.1109/JOE.2019.2938717
+IndexTerms—Coral, deep learning, optical camera array, structure from
+motion (SfM).
+I. INTRODUCTION
+CORALS play a fundamental role in primary production and
+habitat formation for other species [1], [2]. To monitor coral
+environments, efficient and comprehensive survey methods are indispensable.
+Various methods have been developed and used for monitoring
+benthic marine habitats such as coral reefs. Generally, field
+transects, such as line intercept transects, photo line intercept transects,
+and video transects, are the most widely used methods as they are
+easy and simple to conduct as well as relatively inexpensive [3]–[6].
+However, these in situ visual methods require long sampling times
+because of their small-scale coverage. In addition, diving limits the
+survey time based on air tank usage and poses varying degrees of risk.
+Thus, marine biologists and ecologists have increasingly come to rely
+on imagery from platforms such as autonomous underwater vehicles
+(AUVs) or remotely operated vehicles for marine monitoring [7]–[12].
+In the decade, the navigation ability of AUVs has been evolved and
+the underwater imagery obtained by AUVs has been used to construct
+large 2-D mosaic maps and/or high-quality 3-D models of the seabed,
+and can be used to classify and count the abundance of various species
+in a given area [7]–[10]. Recently, AUVs have been used to inspect
+the environments for which no previous information was available
+[11]. However, the development and maintenance costs of this method
+are still high because the underwater vehicles, in general, need other
+expensive equipment [e.g., underwater positioning system, Doppler
+velocity logger (DVL), and motion sensor]. The cost for operation is
+also high because expertise and vessel with adequate equipment are
+usually required to operate these vehicles. In addition, AUV systems
+usually use mono or stereo cameras for observations; therefore, the
+coverage of the survey is limited by the small number of cameras.
+As a common subject, coral subdivision and classification methods
+based on clear recorded images obtained in tropical regions have also
+been studied and investigated using techniques in the field of computer
+vision [9], [13]–[15]. In recent years, recognition of the importance of
+coral surveying in turbid water has been increasing. For example, it was
+reported that, as sea surface, temperatures have risen and the distribution
+of corals in temperate areas, especially in Japan, has been spreading to
+more northern areas [16]. However, in seawater with low transparency,
+the above methods are not directly applicable; most monitoring methods
+have been developed for seawater with high transparency such as in
+tropical regions, using vision-based methods with clear images in which
+experts can classify corals.
+0364-9059 © 2019 IEEE. Personal use is permitted, but republication/redistribution requires IEEE permission.
+See https://www.ieee.org/publications/rights/index.html for more information.
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:36:23 UTC from IEEE Xplore. Restrictions apply.
+MIZUNO et al.: DEVELOPMENT OF AN EFFICIENT CORAL-COVERAGE ESTIMATION METHOD 1387
+Fig. 1. Speedy Sea Scanner (SSS).
+In this article, we address this problem by combining an effective
+survey system [Speedy Sea Scanner (SSS)] that is applicable in turbid
+water and a deep-learning-based estimation method. SSS is developed
+to achieve low-cost and high-quality performance survey. The system
+is a towed optical camera array system with 4.4-m array baseline.
+Orthophotos can be reconstructed from recorded images using the
+low-cost commercial software (Photoscan, Agisoft), which is based
+on the structure from motion (SfM) method [17]. We also developed a
+coral-coverage estimation method using a convolutional neural network
+(CNN) [18] for the orthophotos. To demonstrate the effectiveness of
+the proposed method, we conducted an experiment around the Kujuku-
+Shima Islands, Nagasaki Prefecture, Japan.
+II. METHODS
+A. Towed Optical Camera Array [Speedy Sea Scanner (SSS)]
+1) System Configuration: A towed optical camera array system
+(SSS) (see Fig. 1) was newly developed as a tool for marine monitoring
+[19]. The following is a list of the general characteristics of the SSS.
+1) The cost for development and maintenance is lower than that for
+underwater vehicles because other equipment (e.g., underwater
+positioning system,DVL, and motion sensor) except for thewater
+proof camera is unnecessary in the present system.
+2) The survey efficiency is higher than that by diver and AUVs
+methods. The large number of cameras can be installed on the
+present system and the survey boat for the towing is able tomove
+faster.
+3) The operation is very simple. Turning on the power of cameras
+and deploying the system by two or three adults into thewater are
+required. It can be towed by the small boat (see Fig. 2). This easy
+system will contribute to avoid the electronical and mechanical
+problems.
+4) The pair matching between the adjacent images for the image
+mosaicking is robust. The system can gather the multiple images
+in the across direction at the same moment with keeping the
+certain overlap rate of images by the large number of cameras.
+Especially, in the coastal survey, the light condition and water
+transparency are very changeable in a short time and affect
+the image quality because of the diurnal motion; therefore, the
+images should be taken at the same time.
+5) The system is very portable. It can be carried by a standard van
+and easily deployed on the local survey area.
+The depth rating of the system is 50 m. The length of the array
+baselinewas 4.4 m, and six cameras (DC-GH5, Panasonic, with custommade
+waterproof housing) were installed on the platform with equal
+Fig. 2. Survey with small boat.
+spacing. We determined the length to enable us to handle the system
+by two adults and carry it by small boat to the survey area. The attitude
+during the towing is stable by the tailplane and the tilt angle of the system
+can be tuned by the attachment position of the rope for towing. Before
+the field survey, we conducted some tests for the stable and safe towing.
+As an option for surveying, six LEDs can be attached to the system;
+however, we did not use them in this situation. The optical camera
+recorded the full high-definition video with a recording rate of 23.98
+frames/s. The systemwas towed by the survey boat, whichwas equipped
+with a global positioning system (GPS; Crescent A100, Hemisphere
+GNSS). The height from the sea bottom was set around 2–3 m, and
+the speed of the survey boat was maintained around 2–3 kn during the
+survey.Before the SSS survey, precise seabed topographywasmeasured
+using multibeam sonar (Sonic 2024, R2Sonic LLC) for determination
+of the survey line. During the survey, we used the seabed topography
+and a fish echosounder (HDS-5,Lowrance) to help in keeping the survey
+safe.
+2) Data Processing: The data processing flow is shown in Fig. 3.
+First, the GPS device and cameras were time-synchronized using GPS
+time. Next, continuous still images were obtained from the video data.
+We extracted four still images per second in this study.Color corrections
+were performed on the images because the attenuation of light underwater
+is very high and differs greatly from that in the air, especially in turbid
+water such as coastal sites. A photograph for calibration of this color
+correction was obtained before the survey. As shown in Fig. 4(a), the
+water transparency offshore at Kujuku-Shima was unfavorable during
+the survey (water transparency changes dramatically depending on
+the season and weather conditions in this region). Therefore, color
+correction was necessary before the SfM processing. We used a white
+plate for color correction calibration as shown in Fig. 4. The raw data
+show very high attenuation of light, especially for red light as shown in
+Fig. 4(b). To improve the white balance of the images, the histograms
+of each color were digitally shifted and stretched to be the almost same
+averaged values at each color using the region of interest (see ROI:
+red-dashed square in Fig. 4). Here, we obtained the coefficient for the
+histogram transformation at each color and used them for the pixels
+in other images. Several methods for the color correction have been
+proposed, and the reader is referred to recent article by Li et al. [20].
+The method used in this study is almost the same as the histogram
+equalization method discussed in the article, however, another method
+could have been chosen. The camera locations were estimated based on
+GPS data and added to the corresponding still images. The GPS data
+were up-sampled using the cubic spline interpolation method.Aportion
+of the estimated camera locations is also shown in Fig. 2. In this case, the
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:36:23 UTC from IEEE Xplore. Restrictions apply.
+1388 IEEE JOURNAL OF OCEANIC ENGINEERING, VOL. 45, NO. 4, OCTOBER 2020
+Fig. 3. Data processing flow.
+Fig. 4. Typical image and color histogram of a white board, obtained at the
+survey site. (a) and (b) before color correction. (c) and (d) after color correction.
+up-sampling ratewas ten times the number of original data points.A3-D
+modelwas reconstructed from the continuous images using the low-cost
+commercial software (Photoscan, Agisoft) based on SfM techniques.
+SfM is a technique which utilizes a series of 2-D images to reconstruct
+the 3-D structure [21], [22]. This technique can be used to create
+high-resolution digital surface models and with consumer grade digital
+cameras. The relatively new technique has been applied for the wide
+range of surveyswith unmanned aerial systems [23]–[25]. In addition, it
+has advantage of the 3-D models generation without extensive expertise
+or expensive equipment (e.g., accurate positioning system and motion
+sensor). Recently, the SfM technique has also been available for the
+marine surveys [6], [17]. In this article, we applied and integrated
+this technique with the SSS. From the generated 3-D model, a digital
+elevation model and orthophoto can be produced. Finally, the output
+data are handled using QGIS free software for practical use. Most of
+this data processing is performed automatically in our original program.
+B. Deep-Learning-Based Estimation Method
+In recent years, various methods of object recognition and segmentation
+using deep neural networks have been proposed [18]. For this
+article, we adopted a CNN, which is a kind of deep neural network
+commonly used for image recognition, and built a model to distinguish
+between corals and other objects.We also employed evaluation metrics
+to verify the accuracy of the proposed model.
+1) Coral-Coverage Estimation Using Deep Learning: To
+train our model and verify its accuracy, it is necessary to prepare labeled
+data of coral regions for recorded orthophotos. The details and results of
+coral labeling are described in Section III-B1.We trained the following
+CNN-based network using the labeled images.
+We constructed a pixel-wise estimation model of coral regions using
+the CNN (see Fig. 5) based on an image segmentation method [18].
+The input of the model is a local image of 128 × 128 pixels centered
+on a certain pixel, and the output is the probability that the center is
+a coral. In the model, each input image is resized to 32 × 32 and
+then passed through five convolution layers with a rectified linear unit
+(ReLu) as an activation function and two full connection layers. In
+the convolution layers, we employed the batch normalization [26]
+and dropout [27] methods, which are commonly used to improve
+generalization performance and stabilize learning of neural network
+models.
+To train the network, we added horizontally and vertically flipped
+training images to the training data as data augmentation, because flip
+has been shown to be effective in image recognition and classification
+using CNN [28], [29]. The weights of the network were updated by the
+Adam optimizer [30] with a learning rate 0.001. The maximum number
+of epochs and the batch size were set to 20 and 100, respectively. It
+was confirmed that the maximum number of epochs was sufficient, by
+examining the relationship between training and validation losses and
+the number of epochs using training and validation data in advance.
+2) Coral-Coverage Estimation Using Hand-Crafted Descriptor:
+To verify the usefulness of the CNN-based estimation
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:36:23 UTC from IEEE Xplore. Restrictions apply.
+MIZUNO et al.: DEVELOPMENT OF AN EFFICIENT CORAL-COVERAGE ESTIMATION METHOD 1389
+Fig. 5. Overview of coral region estimation based on the CNN.
+Fig. 6. Seabed topography and survey lines.
+method, we developed a method based on bag-of-visual-words (BoVW)
+[31] using a hand-crafted image descriptor. To compare with the CNNbased
+method, the BoVW-based method calculates image features
+densely from the input local image, represents a histogram based on
+the idea of BoVW, and finally outputs whether the center of the local
+images is coral or not using a classifier.We adopted the speed up robust
+features (SURF) [32],which is a rotation and scale invariant feature and
+is one of the most widely used descriptors. As the classifier, we used
+random forests (RFs), which is a nonlinear classifier and well adopted
+as an excellent classifier with BoVW [33]. We built 256 clusters of
+descriptors using the K-means algorithm for BoVW. The number of
+trees and the maximum number of features when splitting a node,which
+are hyperparameters of RFs, were optimized with grid search.We refer
+to this method as SURF+RF.
+3) Evaluation Metrics: We employed three evaluation metrics,
+precision, recall, and the F-measure, to evaluate the accuracy of coral
+regions predicted by the proposed method. Precision is the fraction
+of manually labeled pixels among predicted coral pixels. Recall is the
+Fig. 7. Typical images. (a) Before color correction. (b) After color correction.
+fraction of the relevant pixels that are successfully predicted as corals
+by the proposed method. For accurate prediction, both precision and
+recall values should be high. The F-measure is the harmonic mean of
+precision and recall as follows:
+F − measure =
+2 · Precision · Recall
+Precision + Recall
+.
+To evaluate the estimation error for coral coverage,we also evaluated
+mean absolute error (MAE) calculated by averaging the absolute errors
+between the predicted and manual coral coverages.
+C. Survey Site
+A sea trial was conducted offshore Kujuku-Shima, Japan, on
+September 30, 2017. The area of the Kujuku-Shima Islands, Nagasaki
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:36:23 UTC from IEEE Xplore. Restrictions apply.
+1390 IEEE JOURNAL OF OCEANIC ENGINEERING, VOL. 45, NO. 4, OCTOBER 2020
+Fig. 8. Orthophotos at various scales.
+Fig. 9. Three-dimensional point cloud and XYZ data for part of survey line 3. (a) Point cloud and (b) XYZ data.
+Prefecture, Japan, is close to the northern distribution limits of corals
+[34] and is designated as a national park. More than 20 kinds of corals,
+such as Dipsastraea speciosa and Acropora pruinosa, have been found
+in this area, and live at depths of about 5–20 m. The seabed topography
+and survey lines offshore Kujuku-Shima are shown in Fig. 6. The SSS
+survey was conducted in an area with water depths of around 10–15 m.
+In this survey, it seemed that the turbidity of the water was relatively
+high, and this degree of turbidity changed dramatically depending on
+the location. The survey time offshore Kujuku-Shima was about 55
+min for four survey lines. Unfortunately, one camera (#6) did not run
+because of a battery problem during the survey. Therefore, the data
+from the remaining five cameras were used for data processing.
+III. RESULTS AND DISCUSSION
+A. Reconstructed Optical Map of the Seafloor
+Typical images from before and after color correction are shown
+in Fig. 7. The colors of the coral and stones were improved. After
+color correction of all images, orthophotos of each survey line were
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:36:23 UTC from IEEE Xplore. Restrictions apply.
+MIZUNO et al.: DEVELOPMENT OF AN EFFICIENT CORAL-COVERAGE ESTIMATION METHOD 1391
+TABLE I
+CORAL PREDICTION RESULTS OF THE CNN-BASED METHOD AND THE CLASSICAL METHOD
+USING SURF DESCRIPTOR AND RFS (SURF+RF) FOR HTD AND LTD
+Bold values indicate the method with higher accuracy for each evaluation metrics.
+constructed. Because of computer memory limitations, the data for each
+line were split into five or six blocks for processing. Finally, an optical
+map of the seabed was generated by connecting the orthophotos in the
+QGIS field (see Fig. 8). The optical map was constructed from a total
+of 40 415 still images, and the coverage area was about 7016m2. In this
+case, the survey efficiency of the SSS was about 7000 m2/h. According
+to previous studies, the efficiency of surveying by divers or swimmers is
+about 150 m2/h [5], [6] and that by AUV about 2470 m2/h at 2 m above
+the seafloor [35].Although the system can output about 30 images/s,we
+used only 4 images/s since it was adequate for making the mosaic map
+in the present study. It means we can change the towed speed faster and
+improve the survey efficiency within the limit of safety. Thus, using the
+SSS, an optical map of the seabed can be obtained relatively efficiently.
+In addition, the image quality was good with a resolution of about 1.5
+mm/pixel. Therefore, we can use this optical map at various scales.
+Fig. 8 shows optical maps with different scales at the same location.
+In addition to the orthophotos, 3-D models were also available. A
+representative 3-D model generated from the data from line #3 is shown
+in Fig. 9. The precise seabed topography can be obtained from the
+3-D model, and we can intuitively understand the current status of the
+seabed. Such 3-D models are expected to become a useful tool to discuss
+the current environment among stakeholders, including for introducing
+marine surveying to beginners.
+B. Coral-Coverage Estimation
+1) Manual Labeling: We manually labeled the coral regions in
+the orthophotos, as shown in Fig. 10. Red regions in Fig. 10(c) and
+(d) represent corals in Fig. 10(a) and (b) extracted from line #3. Coral
+coverage ratios in Fig. 10(c) and (d) were 0.491 and 0.644, respectively.
+We refer to the coral coverage data set of (a) as a low-transparency data
+set (LTD) and that of (b) as a high-transparency data set (HTD).
+2) Evaluation of Deep-Learning-Based Segmentation: We
+performed an evaluation of the proposed coral-coverage estimation
+method using a CNN in our proceedings [36]. Here, we briefly report
+the results. Table I summarizes the predictions and estimates of
+coral coverage. For the first experiment, we performed training of the
+proposed network and evaluation of coral prediction based on twofold
+cross-validation for the LTD and HTD. The F-measure values for the
+HTD and LTD were 0.846 and 0.753, respectively. For all the metrics,
+precision, recall, and the F-measure, the results were higher for theHTD
+than for the LTD. The predicted coverages in the LTD and HTD were
+0.539 and 0.629, and the errors with respect to the manually measured
+values were only 0.048 and 0.015, respectively. These results suggest
+that coral prediction and coverage estimation are possible with high
+Fig. 10. Typical orthophotos before and after labeling for line #3. (a) and (c)
+LTD. (b) and (d) HTD.
+accuracy if sufficient resolution is obtained as an HTD, and even in
+low-transparency environments, as LTD coverage estimation may be
+possible with practical accuracy. To verify whether the CNN-based
+approach is superior to the existing method, we also show the coral
+prediction and coverage estimation by SURF+RF. From the result
+given in Table I, all prediction by CNN achieved higher accuracy than
+SURF+RF, and thus this result shows the usefulness of the CNN-based
+approach. In the second experiment, we conducted another prediction
+experiment by training the proposed network with HTD or LTD and
+tested the performance using the remaining data not used for training.
+The accuracies (F-measures) of coral prediction were also between 0.7
+and 0.8, and the errors (MAEs) in coral-coverage estimation were about
+10%. These results suggest that our method using a CNN is practical
+for coral prediction and coverage estimation.
+3) Estimation of Coral Coverage in the Surveyed Area: We
+calculated the overall coral coverage in the recorded area using the
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:36:23 UTC from IEEE Xplore. Restrictions apply.
+1392 IEEE JOURNAL OF OCEANIC ENGINEERING, VOL. 45, NO. 4, OCTOBER 2020
+Fig. 11. Estimated overall coral distribution.
+Fig. 12. Distribution map of coral coverage: (a) 1-m grid; (b) 2-m grid;
+(c) 4-m grid; and (d) 8-m grid.
+proposed model trained by both the LTD and HTD data sets. Red
+regions in Fig. 11(a) show the estimated coral regions. Fig. 11(c) shows
+the details of the estimated coral regions in the same area as Fig. 11(b),
+which corresponds to the red-outlined image in Fig. 8. Fig. 11(d) is the
+estimated coral regions of line #3 in the green square in Fig. 11(a). The
+estimated coverage ratios for lines #1, #2, #3, and #4 were 0.549, 0.521,
+0.415, and 0.411, respectively. The estimated ratio in the surveyed area
+overall was 0.475. In addition, the distribution map of coral coverage
+ratio with multiscale grid sizes can be created from the estimated
+results to quantify the coral distribution (see Fig. 12). The changes
+of the coral coverage distribution can be clearly seen in this map. This
+quantified map will be useful to assess the coral distribution with other
+environmental factors (e.g., water temperature, turbidity, water quality,
+water depth, and current) in the future survey.
+This overall coverage ratio was not significantly different from the
+survey results for hermatypic coral communities of Japan reported by
+Sugihara et al. [37] using a line transect method [38], although it should
+be noted that different survey methods and periods may affect the
+estimation results. Our results indicated a relatively high coverage ratio
+in high-latitude coral community areas, almost the same as that in the
+area around the Iki islands. Moreover, the species composition of the
+corals observed offshore Kujuku-Shima was similar to that around the
+Iki islands.
+IV. CONCLUSION
+We have developed a new towed-type survey system for marine
+monitoring. This system is more efficient than transect techniques
+and less expensive than underwater vehicles surveying; therefore, it
+is expected to become a promising tool for marine environmental
+surveys with high cost effectiveness. In addition, the system still has
+enough capacity for payload; therefore, other equipment (e.g., water
+temperature recorder, turbidity recorder, water quality recorder, and
+depth recorder) can be embedded on for more informative survey. As
+previously stated, SSS has many advantages; however, this towed-type
+platform is difficult to be used for the deep-sea survey with keeping
+certain altitude. Furthermore, the towed platform needs preliminary
+information of bathymetry map for the safe survey. In these cases,
+the use of the underwater vehicles will be useful. We suggest that
+the camera arrays be used with underwater vehicles with increased
+survey efficiency. In addition, we have also developed an effective
+coral-coverage estimation method using a combination of SSS and
+deep-learning-based segmentation. From the results of our sea trial, it is
+suggested that the proposed system effectively estimates coral coverage
+even in areas of the sea where transparency is relatively poor.We believe
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:36:23 UTC from IEEE Xplore. Restrictions apply.
+MIZUNO et al.: DEVELOPMENT OF AN EFFICIENT CORAL-COVERAGE ESTIMATION METHOD 1393
+that this survey system will become a useful tool for quantitatively
+investigating biological factors such as coral and seagrass meadow
+distributions.
+ACKNOWLEDGMENT
+The authors would like to thank the staff of the Kuroshima Branch
+of the Ainoura Fisheries Cooperative Association at Sasebo for their
+support in the sea trial.
+AUTHOR CONTRIBUTIONS STATEMENT
+K. Mizuno and Y. Matsumoto proposed the idea for SSS design.
+K. Mizuno and S. Sakamoto invented the data processing flow and
+analyzed the experimental data. K.Mizuno, S. Sakamoto, Y. Sugimoto,
+T. Ogawa, K. Sugimoto, A. Kawakubo strategized the idea for data
+collection. K. Terayama proposed the idea for segmentation of coral,
+implemented the proposed method, and analyzed the data. H. Fukami
+and M. Deki identified the coral in the image and created the training
+data for deep learning. All authors discussed the results. K.Mizuno and
+K. Terayama wrote the entire article.

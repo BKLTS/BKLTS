@@ -1,0 +1,92 @@
+&&&&&&&12.Development of a Coral Monitoring System
+for the Use of Underwater Vehicle
+Masakazu Arima, Kana Yoshida, Hirofumi Tonai
+Department of Marine System Engineering
+Osaka Prefecture University
+Sakai, Japan
+arima@marine.osakafu-u.ac.jp
+Abstract— The purpose of this research is to develop a coral
+monitoring system for the use of underwater vehicles. Reef coral
+is very sensitive about changes of ocean environment, such as
+unusual climate changes or increase of crown-of-thorns starfish
+resulting from the global warming. Coral can thus be an index of
+ocean environment. It is widely known that some kinds of corals
+have an inherent characteristic of fluorescence due to ‘coral
+fluorescent protein (CFP).’ The authors are developing an oceangoing
+solar-powered underwater glider, named ‘Tonai60’. The
+operational depth of the Tonai60 glider is 60m, for ocean
+environmental monitoring in twilight ocean zone. The Tonai60
+glider is equipped with an ocean-environment monitoring data
+logger ‘RINKO-Profiler’ of JFE Advantech Co., Ltd. and an
+underwater passive acoustic data logger ‘A-tag’ of Marine Micro
+Technology Corp. for monitoring marine mammals. Measuring
+items of RINKO-Profiler are depth, temperature, conductivity,
+salinity, dissolved oxygen, chlorophyll and turbidity. The glider is
+also equipped with a coral monitoring system at the forefront of
+its fuselage. This system consists of a network camera and 3-axis
+digital compass. Coral can be detected from an image binarised
+with a certain threshold. This paper deals with a coral
+monitoring system using ultraviolet LEDs and image analyses.
+Keywords—coral monitoring system; ocean ecosystem;
+underwater vehicle; Tonai60
+I. INTRODUCTION
+In recent years, there often occur natural disasters due to
+abnormal weather the whole world over. Climate changes
+resulting from the warming of the globe have a great impact on
+ocean ecosystem, too. Japanese Ministry of the Environment
+has formulated the ‘Marine Biodiversity Conservation
+Strategy’ in March 2011. This Conservation Strategy aims to
+conserve the biodiversity which supports the sound structure
+and function of marine ecosystems, and to utilise ecological
+services of the ocean in a sustainable manner. The
+Conservation Strategy made mention as follows [1];
+‘Coral reefs are suggested to be vulnerable to the climate
+change, and their large-scale bleaching by the increased
+seawater temperature has been observed frequently in recent
+years around the world. Furthermore, increasing ambient
+concentrations of carbon dioxide will lead to more carbon
+dioxide dissolved into seawater and subsequent aggravation of
+its acidification. Acidification of seawater will then suppress
+calcification to produce calcium carbonate for the skeleton of
+corals and the shell of plankton. Some species may not be able
+to form its skeleton or shell, and balance of the ecosystem may
+be lost due to changes in the species composition.
+To implement the measures necessary for marine
+biodiversity such as conservation, to check the effects of those
+measures and to react adaptively, changes in marine
+ecosystems must be observed, and monitoring must be
+encouraged. Through survey programs such as Monitoring
+Sites 1000, data on the natural environment such as data on
+biota of shallow water ecosystems (seaweed beds, tidal flats,
+coral reefs, etc.) will be improved continuously. At the same
+time, data on sea turtles, sea birds, marine mammals and so on
+will be collected and organized. Furthermore, if information
+that has not been collected continuously turns out to be
+important in detecting changes in marine biodiversity, a
+method to monitor such information will be examined, and
+efforts will be made to accumulate it.’
+The purpose of this research is development of a coral
+monitoring system, especially for the use of autonomous
+underwater vehicles (AUVs). Observations of reef corals are
+usually conducted by humans; scuba diving for detailed
+investigation of dominant species, manta tow technique and
+line intercept transects for a local-area investigation of coral
+coverage. Aeroplanes and satellites are sometimes used for a
+wide-range and rough investigation of coral distribution. Each
+of these methods has its advantages and disadvantages [2, 3].
+For instance, there are time restrictions for scuba diving at a
+depth of over 30 metres. Observations by humans using ships
+and aeroplanes are influenced by weather and sea conditions.
+Remote sensing by satellites is obstructed by clouds.
+The authors plan to realise a wide-range and long-term
+monitoring of reef corals using autonomous underwater glider.
+This paper deals with a coral monitoring system which consists
+of a high-sensitivity network camera and a 3-axis digital
+compass for the use of navigation and a controller on board the
+ocean-going solar-powered underwater glider, named Tonai60.
+It is widely known that some kinds of corals have an inherent
+characteristic of fluorescence due to coral fluorescent protein
+(CFP) [4]. Coral can be detected from an image binarised with
+a certain threshold, and the network camera will be controlled
+automatically so as to maintain its lens to a downward direction,
+even though the attitude of the glider was changed.

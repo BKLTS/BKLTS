@@ -1,0 +1,97 @@
+&&&&&&&3.Fast Classification and Detection of Marine Targets
+in Complex Scenes with YOLOv3
+1st Tingchao Shi
+School of Marine Engineering
+Northwestern Polytechnical University
+Xian, China, 710072
+shi tingchao@mail.nwpu.edu.cn
+2nd Mingyong Liu
+School of Marine Engineering
+Northwestern Polytechnical University
+Xian, China, 710072
+liumingyong@nwpu.edu.cn
+3rd Yang Yang
+School of Marine Engineering
+Northwestern Polytechnical University
+Xian, China, 710072
+y yang@126.com
+4th Sainan Li
+School of Marine Engineering
+Northwestern Polytechnical University
+Xian, China, 710072
+18829043370@163.com
+5th Peixin Wang
+School of Marine Engineering
+Northwestern Polytechnical University
+Xian, China, 710072
+447006353@qq.com
+6th Yuxuan Huang
+School of Marine Engineering
+Northwestern Polytechnical University
+Xian, China, 710072
+767805632@qq.com
+Abstract—In order to meet the needs of fast detection and classification
+of different marine targets during intelligent unmanned
+surface vehicle (USV) operations, In this paper, I introduce a
+convolutional neural network based on one of the most effective
+object detection algorithms, named YOLOv3, to classify and
+detect images of different marine targets. Firstly, I showed
+the network structure of the algorithm in this paper. Then, I
+explained how I got the optimal anchor box parameter of the
+algorithm. Finally, I improved the activation function to make
+the algorithm more robust to noise. The final results show that
+the MAP of the detector in this paper is 91:83%,and we reach a
+detection rate of 58.3 fps by improving the YOLOV3 algorithm.
+Keywords—YOLOv3, Classification, Detection, Marine Targets
+I. INTRODUCTION
+Nearly 70% of the Earth’s surface area is covered by the
+ocean, and 90% of the world economy is done by ocean
+transportation. Today, with the deepening of globalization, the
+ocean is an important link for economic and cultural exchanges
+among countries all over the world. Marine target identification
+is playing an important part of modern maritime intelligent
+monitoring system.It is of great significance to identify all
+kinds of ship targets in monitoring maritime traffic, safeguarding
+maritime rights and interests, and improving early warning
+capability of coastal defense quickly and accurately.
+In recent years, the target detection method based on deep
+learning has made great breakthroughs, and the main methods
+can be divided into two categories. One is based on the
+regional recommendation target detection algorithm. Firstly,
+the regional target is used to generate the candidate target, and
+then the convolutional neural network is used for processing.
+The accuracy is high but it cannot meet the requirements
+of real-time application. The representative algorithms are
+RCNN[1], Fast RCNN[2] , Faster RCNN[3], Mask RCNN[4],
+etc. The other type is the target detection algorithm based
+on the regression method. The detection problem is treated
+as a regression problem, and the target position and category
+are directly predicted. This type of method is fast, but relatively
+low precision. Representative algorithms are YOLO[5],
+YOLOv2[6], YOLOv3[7], etc. Xiu Li, et al. classified and
+detected twelve species of fish using Faster R-CNN[8]. Zuoying
+Cui,et al. proposed a method on account of the 32-layer
+residual networks to classify different categories of plankton
+images[9]. Minsung Sung, et al. applied the YOLO neural
+network to detect and classify fish[10].Medhdi et al. proposed
+an underwater cable recognition method based on texture
+features[11].
+However, there are many difficulties in image classification
+and object detection due to the complex and harsh sea conditions.
+In this paper, we use a convolutional neural network
+based YOLOv3 algorithm to classify and detect images of
+different marine targets.
+II. MODEL DETECTION PROCESS
+YOLOv3 is a regression-based target detection algorithm.
+Firstly, the input images are divided into S*S grids. Each
+grid cell predicts N bounding boxes while training.The information
+contained in each bounding box can be represented as
+tx; ty; tw; th C , where tx; ty; tw; th represent predicted coordinate
+information and C represent predicted confidence information.
+8>><
+>>:
+bx = s(tx) + cx
+by = s(ty) + cy
+bw = pwetw
+bh = pheth
+(1)

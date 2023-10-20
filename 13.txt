@@ -1,0 +1,295 @@
+&&&&&&&13.Design of an Underwater Robot for Coral Reef
+Monitoring in Honduras
+Jose Luis Ordoñez Avila, Marcial Gustavo Ordoñez Avila, Maria Elena Perdomo
+Faculty of Engineering, Universidad Tecnológica Centroamericana (UNITEC), San Pedro Sula, Honduras
+Email: jlordonez@unitec.edu; marcial.ordoñez@unitec.edu; maria_perdomo@unitec.edu
+Abstract—Climate change is affecting all ecosystems in the
+world, robotics applications are focusing on monitoring
+ecosystems effects. Coral reef in Honduras is an important
+resource that needs to be preserved. This study shows the
+development of a robot for monitoring coral reef, simplifying
+some challenges of underwater mechanical robot design. The
+robot development implements VDI 2206 model into cycles the
+lab design and the prototype integration. Because of different
+force estimations, simulations and field test the robot accomplish
+its task. PWM outputs control the force thrust. Internal sensors
+for leaks and temperature assure the robot functions. The vision
+system detect motion to take videos and photos every 2 minutes.
+Sea water temperature, videos, and photos are stored in a minicomputer.
+The flow simulation assures robot mechanical design
+to accomplish its task. The control should be improve adding a
+mathematical model for the robot displacement underwater.
+Keywords—Robotics, Honduras, Coral reef, PIC
+Microcontroller, IHCIETI
+I. INTRODUCTION
+Today many studies develop at sea; many of these studies
+are important to conserve our oceans and coast. These studies
+have complexity that can sometimes endanger humans' lives.
+An example of this is the Veracruz Reef System in Mexico.
+The depth is greater than 30 meters and has a navigation
+channel that jeopardizes divers' integrity while conducting
+investigations [1]. Other research conducted in Honduras,
+found in new coral reef in Tela on 2014, representing the
+highest population density after being extinct anywhere in the
+Caribbean [2].
+The beauty of these sea creatures is admirable. However,
+climate change affects these specimens; high temperatures
+calcify these reefs by turning them to death. The temperature
+trend on the surface continues to rise. This calcification is why
+monitoring reefs has become necessary. Survival of corals
+reef drop below 50% when maximum temperatures exceed
+30.5 ◦C [3]. Figure 1 shows the 30.5 ◦C point and the average
+temperature from 2015 to 2020 in Tela, Honduras.
+Underwater robots and agricultural robots have a wide
+range of applications, including those related to the
+monitoring of the environment, and disease detection, among
+others [4]. These robots can be divided into remotely operated
+vehicles (ROV) and autonomous underwater vehicles (AUV).
+Some ROV uses a cable to establish communication.
+Unlike traditional communication, underwater,
+radiofrequency, and optical waves. These communications are
+not practically underwater. Heat and photons affect optical
+transmitters, while radio waves are limited by the dense
+marine environment, leaving the option of acoustic modems,
+which are excessively expensive [5].
+Fig. 1. Tela surface temperature [6]
+Radiofrequency technology loses strength while performing
+at a greater distance. Optics become more convenient.
+However, without becoming efficient, underwater
+communication networks are a highly acclaimed research area
+today [7]. It shows the difficulties of underwater robot
+teleoperators.
+AUVs are a challenge because of programming,
+mathematical models, and algorithms to control the robot's
+trajectories. One option is to generate structured maps in cells
+that provide information that spaces are free to move the robot
+[8]. This article aims to develop an underwater robot with an
+artificial vision system, to monitor coral reefs at different depth
+below sea level. This robot uses different modes to accomplish
+its tasks, such as teleoperation for surface mobility and video
+access in submerging mode.
+II. METHOD
+The method used in this research is a VDI 2206 model [9].
+This method proposed different cycles to develop a functional
+prototype. The cycles in this project are the lab design and the
+functional prototype. Lab design comprises analyzing the
+prototype using simulation software, including hydrodynamic
+simulations, electronic design, control design, and vision test.
+The functional prototype process includes 3D printing
+manufacturing, microprocessors programming, and systems
+integrations. Fig. 2 shows the systems and subsystems
+developed in this project. The two systems are the mechanical
+system and the electronic system. For the lab design, we
+validated the mechanical systems using SolidWorks flow
+simulation and simulation express. The electronic system using
+Matlab and a small aquarium for testing.
+86
+2021 6th International Conference on Control and Robotics Engineering
+978-1-6654-1239-1/21/$31.00 ©2021 IEEE
+2021 6th International Conference on Control and Robotics Engineering (ICCRE) | 978-1-6654-1239-1/20/$31.00 ©2021 IEEE | DOI: 10.1109/ICCRE51898.2021.9435710
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:47:19 UTC from IEEE Xplore. Restrictions apply.
+Fig. 2. Systems and subsystems diagram
+III. LAB DESIGN
+A. Mechanic System
+The first step in the robot's development was to select
+components and materials for the structure. The structure
+design comprises a 4" diameter waterproof capsule, a PETG
+shell. To submerge the robot, you need an airtight design, so
+all electronic elements there is a fully sealed acrylic capsule,
+placing all electronic elements inside connecting
+microcontrollers, turbines and sensors specialized in systems
+under the sea. The shell comprises two symmetrical parts used
+for mounting the thrust, as shown in figure 3. It has circular
+perforations allowing the water flow through the submerging
+process.
+Fig. 3. Hydrodynamic shell design
+The structure volume estimated was 0.0142 m3. We
+calculate the buoyancy force using equation 1.
+(𝑆𝑒𝑎𝑤𝑎𝑡𝑒𝑟 𝜌 = 1.024 𝑘𝑔/𝑚3)
+𝑓𝑏 = 𝜌𝑔𝑉 = 142.5 𝑁 (1)
+The next step is the hydrodynamic evaluation in
+SolidWorks. This evaluation comprises two parts: calculating
+the force needed to submerging the robot and moving it
+underwater.
+Fig. 4 is a submerging simulation. The simulation was
+performed assuming a fluid velocity of 0.5m/s. It shows the
+velocity vectors in different colors depending on their speed,
+generating the fluid patterns. The fluid pattern generates some
+vortex; however, their velocity is too slow, going from 0 to
+0.125m/s. The shell works well for submerging. The bidimensional
+flow simulation is shown in Fig. 5. This
+simulation shows a flow pattern with no vortex and an
+isosurface for velocity representation. The trajectories in the
+pattern decrease from 0.517 - 0.258m/s because of the capsule
+and shell. The green isosurface represents the fluid velocity
+(0.249-0.374m/s) as it advances in the water.
+Fig. 4. Submerging flow simulation
+Fig. 5. Moving flow simulation
+Now we have the force to move the robot into the water.
+The robot needs more force for submerging than for moving, as
+shown in figure 6. The average force for moving is 13.92 N
+and for submerging 15.56 N. The maximum water resistance
+force 𝑓𝑤𝑟 is 20.75N. The design of the mechanical system is
+completed for the functional prototype manufacturing and
+assembling.
+Fig. 6. Moving and submerging force results
+B. Electronic System
+The robot has an internal and an external communication.
+The internal communication is to communicate the three
+microcontrollers. This microcontrollers are for the vision
+subsystem, one for the storage of sensory data and robot
+movement, and a master for executing an internal timer for
+missions underwater. The external communication is used to
+teleoperate the robot before submerging. This teleoperation
+87
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:47:19 UTC from IEEE Xplore. Restrictions apply.
+allows the robot to be placed in a favorable position for
+submerging.
+The robot mobility depends on the thrust force. Fig. 7
+shows the robot mobility. There are two thrust to move at sea;
+activating both the robot moves forward and reverse. If only
+one thrust is turned on, it rotates to one side. It also has two
+more thrust for submerging. The robot structure can work
+with 4 degrees of freedom (DF), but programming only 3 DF
+to achieve bi-dimensional movements and gain stability.
+Fig. 7. Robot mobility
+The force needed to at sea surface (1 and 2) was calculated
+with SolidWorks flow simulation. Now using the thrust
+experimental data from the manufacturer. The force should be
+greater than 19.4 N between the two thruster. Each thruster
+can perform a force between 0-28.4 N at 12 v as show in
+figure 8. The R2=99.27% represents a high reliability between
+the RPM and the force. Calculating The thruster RPM by
+equation 2.
+𝑅𝑃𝑀 = −2.315𝑓2 + 149.75𝑓 + 526.15 = 2185 (2)
+The force needed for submerging (𝑓𝑑 ) is greater than the
+one for moving and can be calculated in equation 3. The
+estimated weight (w) of the robot is 120 N. The 43.25 N are
+for the two thrust applying equation 2, each thrust RPM is
+equal to 2685.
+Fig. 8. Force (X axis) and RPM (Y axis) thrust relation [10]
+𝑓𝑑 + 𝑤 = 𝑓𝑏 + 𝑓𝑤𝑟 (3)
+𝑓𝑑 = 𝑓𝑏 + 𝑓𝑤𝑟 − 𝑤 = 43.25 N
+The relation between the PWM signal and the thruster's
+RPM was calculated using Matlab system identification tool.
+Basing the transfer function in experimental data. Figure 9
+shows the output response.
+𝑦(𝑠) =
+0.001302
+𝑠2+4.673𝑒−6𝑠+0.000995 (4)
+Fig. 9. Thruster step response
+The internal sensors are used to the detect potential
+problems. It includes two sensors, one for internal temperature
+and the leak sensor. The vision subsystem needs a lot of
+processing, making the microcontroller to overheat. The
+microcontrollers are inside a close capsule, avoiding air flow.
+The overheating testing determined a temperature increase
+from 29 to 50 C. The vision subsystem turns off with this
+increasing temperature. If temperature is higher than 40 C, the
+process will interrupt aborting the process. The same happens
+with the leaking sensors to prevent incidents inside de capsule.
+The external sensors receive information from the sea. The
+MS5837-30BA use I2C to send the pressure and temperature
+underwater. The sensor operating depth is 300m and 30 bar.
+The temperature accuracy is 1 degree Celsius. This sensor
+communicates with the Atmega to store the sea temperature.
+The depth is used to control the submerging.
+Fig. 10. Vision testing
+One important test is the artificial vision system. . It started
+using a camera with VGA output, which did not give the
+expected results proceeded with the acquisition of a 1080
+Lifecam webcam. We tested the system for over 12 hours using
+a small laboratory aquarium that was implemented for this
+project. This aquarium test if the camera could detect, record,
+and photograph the goldfish in motion. This testing resulted in
+the microcontroller's heating, so a heat sink was added to
+improve the operation. The artificial vision system has detected
+fish, through a webcam, successfully, for more than an hour
+continuously, presenting no inconveniences.
+IV. PROTOTYPE INTEGRATION
+The shell is 3D printing using PETG, infill is 15%, making
+the structure with internal cavities. Metallic cummerbunds
+88
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:47:19 UTC from IEEE Xplore. Restrictions apply.
+holds the shell with the capsule. Fig. 11 shows the subsystems
+integration. The PIC microcontroller is in charge of the
+mission time for submerging and data storing. The Atmega is
+the main microcontroller. It receives serial communication to
+be teleoperated before submerging. Controlling the thrust by
+PWM signals moving a RPM calculated in section III. The
+electrical consumption of the thrusts is vital to determine the
+autonomy of the robot, using two 12V batteries with
+7500mA/H. Founding that the thrust that goes up and down
+the robot discharges the battery in 120 minutes.
+The external sensor use I2C storing information in a SD
+card. The Raspberry Pi starts its video process and stores it in
+a SD. Motion library to perform two minutes videos when
+motion was detected. The sensory system receives
+information from the sea, the temperature that is vital in
+climate change, and also has a pressure sensor to know the
+level of depth at which it is located.
+Fig. 11. Schematic diagram
+We show the functional algorithm that describes the robot
+process in Fig. 11. The teleoperation mode activates once
+serial communication is stable. This mode allows the user to
+move the robot to the sea surface by using a control. The
+control has submerging button in which it activate a timer and
+monitoring the internal sensors. The set_t is the time set by
+the user the data acquisition record videos, photos and the sea
+temperature.
+The submerging mode turns on the thrust to introduce the
+robot inside the sea until a define max depth (max_d). When
+the depth is greater than the max_d thrusts turn off. The
+floating mode moves the robot by the floating force until it
+gets the define minimum depth (min_d). This process has the
+advantage of using less energy to maintain the robot
+underwater. The process continues until it is greater than set_t.
+Then the robot gets to the surface because of the floating force.
+Serial communication can connect it to teleoperation mode to
+start the process again. The submerging mode also has a close
+loop. First, it uses an acceleration ramp to star thrust, reducing
+strong movements. This acceleration ramp increase from 0 to
+2685 RPM in 1.5s, saving the actual depth. The controller
+compares the actual depth with the real depth, increasing
+PWM signals if it's necessary.
+Fig.12. Functional algorithm
+V. EXPERIMENT
+We selected Tela, Honduras for testing the robot in the sea.
+This place contains two small coral reef barriers. Robot
+parameters where set_t = 10min, max_d = 5m, and min_d =
+3m. The waves' tallness were less than 0.5m permitting a stable
+sea movement. The teleoperation mode has no inconvenient for
+displacement of the robot in the sea surface. Submerging the
+robot has greater challenge. The robot's movement on some
+occasions was too fast, so the camera can't properly focus the
+images. Fig. 14 shows a coral reefs section captured from the
+video. After two hours of measurements, temperature varies
+from 26.59 to 29.74 C.
+Fig. 13. Functional prototype
+89
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:47:19 UTC from IEEE Xplore. Restrictions apply.
+VI. DISCUSSION AND CONCLUSION
+In lab design section, implementing a software simulation
+technique was important to develop the robot. Another
+example of this technique is the projections of motion velocity
+[12]. The flow simulation method used to calculate a balloon
+prototype force is a similar method used in this project [11].
+Drag force and coefficient of drag are among other factors
+that determine the profile for the blimp design.
+The robot uses a teleoperation mode to move on the sea
+surface. Other systems take advantage of minicomputer with
+access point and Wi-Fi connection. In addition, robots can
+work together, with the control center and with an external
+device [14]. The UART communication is a simple way to
+teleoperate the robot in short distance improvements could
+increase the communication distance.
+The robot mechanical design has accomplished its task.
+The control should be improve adding a mathematical model
+for the robot displacement under water. This improvement
+should be like the thrust dispatching module that calculates
+control signals [12]. A sonar sensor could help to map its
+environment.
+AC KNOWLEDGEMEN T
+This work was supported by IHCIETI, who gave the funds
+to conduct this research as part of PIA 2019.
+Fig. 14. Robot video capture a) coral bank, b) Echinoidea Sea hedgehog

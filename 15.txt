@@ -1,0 +1,500 @@
+
+&&&&&&&15.Action Learning for Coral Detection and Species Classification
+Junhong Xu, Lantao Liu
+School of Informatics, Computing, and Engineering
+Indiana University, Bloomington, IN 47408, USA.
+E-mail: {xu14, lantao}@iu.edu
+Abstract—This paper presents a method for exploring and
+monitoring coral reef habitats using an autonomous underwater
+vehicle (AUV) equipped with an onboard camera. To accomplish
+this task, the vehicle needs to learn to detect and classify
+different coral species, and also make motion decisions for
+exploring larger unknown areas while trying to detect as more
+corals (with species labels) as possible. We propose a systematic
+framework that integrates object detection, occupancy grid
+mapping, and reinforcement learning methods. To enable the
+vehicle to adjudicate decisions between exploration of larger
+space and exploitation of promising areas, we propose a
+reward function that combines both an information-theoretic
+objective for environment spatial coverage and an ingredient
+that encourages coral detection.We have validated the proposed
+method through extensive simulations, and the results show that
+our approach can achieve a good performance even by training
+with a small number of images (50 images in total) collected
+in the simulator.
+I. INTRODUCTION
+Autonomous underwater vehicles (AUVs) are highly attractive
+alternatives to human divers for many underwater
+search, surveillance, and monitoring tasks [1], [2]. For instance,
+the coral reef monitoring has become increasingly
+important because corals have direct and indirect impact on
+the habitats of other marine animals. Oftentimes this task
+is carried out by humans, e.g., scuba divers. In this paper,
+we present an approach that allows an AUV to explore
+underwater environments and detect corals autonomously.
+The major challenge is how to utilize limited visual
+information to plan motions for the AUV. One method is to
+use the end-to-end learning to obtain actions from directly
+using the visual data [3]. However, images contain only
+local information within the camera’s field of view, and thus
+without a carefully designed reward function that contains
+global environmental information, it is difficult for the AUV
+to learn to explore a large unknown environment. Instead of
+learning directly from raw pixels, we combine deep learning,
+occupancy grid mapping [4], and reinforcement learning
+methods in a systematic way. Specifically, a YOLOv3 object
+detector [5] is used as a visual perception system to process
+the images streamed from an onboard camera and output
+probabilistic distribution of detected classes of coral species.
+This information is then used as input to build an occupancy
+grid map where each grid represents the probability of
+corals in the corresponding location. The map together with
+the current pose information of the vehicle are passed to
+a reinforcement learning component for motion decisionmaking.
+An illustration of the system is shown in Fig. 1.
+Fig. 1. An illustration of the system that enables the AUV to autonomously
+explore and monitor the coral habitats in unknown environments. The
+YOLOv3 detector (shown on the top) [5] processes the images captured
+by an onboard camera. The obtained coral species distribution is used to
+update the occupancy grid map of the environment. The AUV’s motion
+decision is then computed based on the updated map and the current pose
+of the vehicle.
+In order to allow the vehicle to explore the environment,
+we use an information-theoretic reward function calculated
+with the information gain of the constructed map to train the
+AUV. This will ensure that when a coral-rich area is fully
+explored, the vehicle will switch to search for more corals in
+other areas. Because the distribution of corals follow some
+specific patterns [6], once the AUV is trained in a large set
+of environments, it generalizes to explore and monitor other
+new environments.
+To validate our method, we have conducted extensive
+simulations. We evaluated the performance of the AUV in
+terms of the amount of map entropy reduction and the number
+of detected corals. The results reveal that our proposed
+framework allows the AUV to explore and monitor the coral
+habitats efficiently.
+II. RELATED WORK
+There has been considerable research on environmental
+exploration using autonomous robots. The main idea is to
+enable the robot to make sequential decisions to efficiently
+explore and map an environment with a limited amount
+of time [7], [8], [9], [10]. The environmental map entropy
+reduction has been a widely used objective if the target
+978-0-578-57618-3 ©2019 MTS
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:49:05 UTC from IEEE Xplore. Restrictions apply.
+(a) (b) (c) (d)
+Fig. 2. (a) Illustration of an underwater image with object bounding boxes, where the blue and red boxes represent two different types of corals. (b)
+Demonstration of rotation and translation for image augmentation. Note that the bounding box locations are also changed. (c) Application of Gaussian blur
+to the image. (d) Brightness reduction of the original image.
+environment is initially unknown [11], [12]. Very relevant
+to the map entropy, another important objective is to plan
+robot exploration actions that maximize the information gain
+of the map where the information gain is usually represented
+with mutual information. For example, the Shannon mutual
+information has been employed to explore ocean and lake
+environments with aquatic vehicles [13], [14], [15], and the
+Cauchy-Schwarz mutual information has been used to map
+a 3D indoor environment with ground robots [9]. The work
+in [16] is the most relevant to ours. The authors trained an RL
+agent to choose actions which are modeled as polynomials
+in order to minimize the map uncertainty.
+End-to-end learning is another way to learn sequential
+decisions for autonomous systems. Particularly, the deep
+reinforcement learning has been proved to be a great success
+for autonomous robot decision-making using raw image
+inputs [3]. In our work, instead of directly using pixels
+as the input, we pre-process raw images with a series of
+useful image processing techniques before feeding them
+to the neural network to enhance the learning robustness.
+With the large amount of image data and computing power
+available, CNN-based object detectors have shown tremendous
+progress during past few years [17], [5], [18]. Among
+numerous choices, we opt to employ the YOLOv3 object
+detector [5] for the coral detection due to its high accuracy
+and efficiency.
+III. CORAL SPECIES DETECTION AND CLASSIFICATION
+In this section, we discuss the training procedure and data
+augmentation methods to train a coral detector with limited
+data.
+A. YOLOv3 Detector
+The YOLOv3 object detector is a real-time object detection
+system [5] that applies a neural network to a full image.
+The network divides the image into regions and predicts
+bounding boxes for objects and their probabilities. It uses
+anchor boxes to predict the bounding boxes for each object.
+Anchor boxes are usually pre-defined before training and
+serve as priors for predictions. YOLOv3 splits an input
+image into small grid cells. For each grid, it predicts the
+position offset of each anchor box relative to the cell center.
+During training, the sum-of-squared error is used as the loss
+function for the position offset prediction. The algorithm uses
+independent logistic classifications for each class in each of
+the anchor box to allow multi-label predictions. Since we
+may not have multiple labels for each coral species, we opt
+to use a softmax classifier.
+B. Data Augmentation and Training Procedure
+Since currently there is no open-source dataset for coral
+species analysis, we created a simulated environment for data
+collection as shown in Fig. 1. In this environment, we use 3D
+meshes of different species (classes) of corals with differing
+visual appearances as shown in Fig. 2. We teleoperate the
+simulated AUV to collect a set of 50 images from different
+views of the environment. Each image is recorded with pixel
+resolution of 600×600. Each coral instance in the collected
+images is labeled with a bounding box and its corresponding
+class. For data augmentation, we augment the size of dataset
+by creating similar images with operations of modifying
+brightness, translating and rotating, and adding Gaussian blur
+to the original images. The original and augmented images
+together serve as the training sets for the YOLOv3. Examples
+after the image augmentation are illustrated in Fig. 2.
+Even with the data augmentation method, the size of the
+dataset is still not sufficient to train the YOLOv3 detector.
+We leverage the transfer learning method to further reduce
+the chance of overfitting of the network. Instead of training
+all the layers from scratch, we use the YOLOv3 model pretrained
+on the COCO dataset [19] as a baseline for the
+transfer learning. Specifically, only the last three layers of
+the network are updated during training [20], [21]. This level
+of fine-tuning is similar to training a 3-layer neural network
+which requires much less data than training a full YOLOv3
+detector.
+IV. CORAL HABITATS EXPLORATION AND MONITORING
+WITH REINFORCEMENT LEARNING
+We propose an approach to combine the YOLOv3 detector,
+occupancy grid mapping, and reinforcement learning mechanisms.
+The key idea of our method is to first convert the
+processed visual data into a coral location map, and then
+train the AUV with an information-theoretic reward function
+based on the information gain of the map. We assume the
+pose of the vehicle can be accurately obtained, e.g. using a
+USBL positioning system [22], and the depth of the AUV
+does not change during the mission.
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:49:05 UTC from IEEE Xplore. Restrictions apply.
+A. Coral Occupancy Grid Map
+In order to define information-theoretic reward function,
+we first need to introduce what environmental information
+will be used. Since we are interested in exploring large
+and possibly unknown coral habitats and monitoring those
+observed areas, a reasonable choice is the map that contains
+the (stochastic) information of coral locations.
+1) Occupancy grid map: We use the occupancy grid
+map [4] to represent our map. It is defined as a set of 2D
+grids m={m0, ...,mM−1}, where M indicates the number of
+girds. Every grid mi is associated with a feature fi. In our
+case, the feature represents whether the corresponding grid
+is occupied by corals. The general goal of the occupancy
+grid mapping is to compute the probabilistic distribution of
+the map from the past sensor measurements and robot poses
+p(m|z0:T ,x0:T) =Πi
+p( fi|z0:T ,x0:T ), (1)
+where z0:T and x0:T are sequences of measurements and robot
+poses at different discrete time steps, respectively. Eq. (1)
+assumes that each grid is independent of others, which
+makes the computation more tractable [23]. The occupancy
+probability of each grid can be calculated using Bayes’ rule
+p( fi|z0:T ,x0:T) =η p( fi|zT ,xT )
+p(zT |xT )p( fi|z0:T−1,x0:T−1), (2)
+where η is the normalizer and p( fi|zT ,xT ) is called inverse
+sensor model which represents the probability of the occupancy
+at mi given the current measurement and robot pose.
+Using the log-odd notation, we can rewrite Eq. (2) as
+Li,t = Li,t−1+log
+p( fi|zT ,xT )
+1− p( fi|zT ,xT )
+−log
+p( fi)
+1− p( fi)
+, (3)
+where Li,t−1 is the log odds at the previous time step. The
+prior of occupancy girds is commonly set as p( fi) = 0.5.
+2) Inverse sensor model: To compute the posterior of a
+grid being occupied by some coral, we need the inverse
+sensor model p( fi|zT ,xT ) which outputs the probability of
+coral occupancy at the gird mi given current image (sensing
+observation) and the robot pose. We use the output from the
+trained YOLOv3 detector to compute this probability distribution.
+The output oT = ∪ki
+=0
+{si
+T , ci
+T ,bi
+T
+} from the object
+detector at time T given an image zT consists of the class
+score si
+T , the detected class label ci
+T , and the bounding box
+information bi
+T for each of the detected object. We express
+the occupancy probability as follows
+p( fi|zT ,xT) = α
+kΣ
+i=0
+p(mi ∩ˆbi
+T
+|xT , zT )p(si
+T
+|ci
+T , zT ), (4)
+where α is the normalization constant and p(si
+T
+|ci
+T , zT) = si
+T
+is the confidence score of the ith detected object to be the
+class ci
+T . The term p(mi∩ˆbi
+T
+|xT , zT ) indicates the probability
+of intersection between the object’s predicted bounding box
+ˆb
+i
+T in the world frame and the grid region mi.
+In order to compute ˆbi
+T , we need to convert the pixel
+coordinates of the bounding box in the given image zT to
+Fig. 3. An illustration of the camera setup. The camera is mounted
+underneath the AUV. We set the camera to look downward (indicated by the
+red arrow) so that each image pixel has the same depth value. The red and
+gray areas denote the grids that are inside and outside the camera’s field of
+view, respectively.
+the world frame. To simplify this computation, we make
+the camera look downward so that each point in the world
+frame within the camera’s field of view is projected onto the
+image plane with the same depth, as shown in Fig. 3. In
+this case, the depth value of each pixel in the image is fixed
+and known, which is equal to the distance between the AUV
+and the ground plane. To compute the world coordinates of
+the bounding box, we first compute its coordinates in the
+camera frame, then convert the result to the world frame
+using the transformation matrix of the vehicle computed from
+the vehicle pose. The intersection probability can then be
+computed as follows
+p(mi ∩ˆbi
+T
+|xT , zT) =N (mci
+|ˆbi,c
+T ,Σi
+T ), (5)
+where mci
+and ˆbi,c
+T are the center positions of the grid and
+the bounding box in the world frame, respectively. We
+have assumed that the intersection likelihood is normally
+distributed around the center of the bounding box and the
+variance in the two dimensions are proportional to the height
+and width of the bounding box.
+B. Reinforcement Learning with Information-Theoretic Reward
+The task for the AUV is to explore and monitor large
+coral habitats. This requires the vehicle to choose between
+staying at those discovered/explored areas or exploring more
+unknown regions to increase the number of observed corals.
+This is the well-known tradeoff between exploration and
+exploitation. To address this issue, we propose a reward function
+based on the information gain of the coral map. We use
+reinforcement learning to compute vehicle action policies.
+Since the coral habitats usually share some patterns [6],
+the learned policy can generalize to novel environments
+assuming the robot is trained in a large set of different
+environments.
+Because we assume the pose of the vehicle can be obtained
+accurately, we can model the environment as a Markov
+Decision Process (MDP). An MDP is represented by a 5-
+tuple {S,A,T,R, γ}, where s ∈ S and a ∈ A stand for state
+and action, respectively; T(s,a, s) = p(s|s,a) is the state
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:49:05 UTC from IEEE Xplore. Restrictions apply.
+(a) (b) (c)
+(d) (e) (f)
+Fig. 4. Evaluation of the YOLOv3 coral detection. The top row shows the training environment. The bottom row shows the results in the testing
+environments. Each detected coral species is labeled by a bounding box and its corresponding species label.
+transition function, and R(s,a) is the reward function that
+maps from a state-action pair to a scalar reward, and γ is
+the discount factor. In the reinforcement learning setting, an
+agent seeks to find a policy π that maximizes the expected
+discounted reward
+π∗
+= argmax
+π
+E[γR(s,a)], (6)
+where a = π(s).
+1) State space: We represent the state s = (x,m) as a
+concatenation of the robot current pose and the map. The
+map information provides the robot the areas that have not
+been explored and the locations of the observed corals. It
+is used by the function approximator to generalize over
+different environments.
+2) Action space: Since the vehicle operates at the same
+depth, an action a = (v,ω) consists of linear and angular
+velocities on a plane.
+3) Information-theoretic reward: The simplest reward
+function for this task is to make the reward with a value
+equal to the number of the observed objects from the YOLO
+detector r(s,a) = |o|. However, maximizing this observation
+reward function will cause the vehicle to circle around an
+area where the density of the corals is high. This limits
+the vehicle to explore other surrounding areas. To solve this
+problem, we use an information-theoretic approach to model
+the reward function which maximizes the information gain
+of the map. The information gain is defined as the reduction
+of the map entropy [24]
+IG(m) = H(m)−H(m|at , sT+1, zT+1), (7)
+after taking an action aT , transitioning into sT+1, and observing
+an image zT+1. The map entropy is calculated as
+H(m) =
+M−1
+Σ
+i=0
+−pT log pT −(1− pT ) log(1− pT ), (8)
+where pT is the map distribution at time step T given by
+Eq. (1). The conditional map entropy H(m|at , sT+1, zT+1) is
+computed using the map distribution at T +1 after taking the
+action at . We define the reward function as a weighted sum
+of the observation reward and the information gain.
+R(s,a) = wo|o|+wIGIG(m), (9)
+where the weights wo,wIG,wv balance the importance between
+exploration and exploitation.
+4) Learning algorithm: Our reward function can be used
+by any reinforcement learning algorithms. We choose to
+use the Proximal Policy Optimization (PPO) algorithm [25]
+since it is easy to implement and has the state-of-theart
+performance. We use fully connected neural networks
+as function approximators to handle high-dimensional and
+continuous state and action spaces.
+V. EXPERIMENTAL RESULTS
+We have performed experimental evaluations through extensive
+simulations. Here we present results of the AUV
+which is tasked for monitoring coral habitats in an initially
+unknown underwater environment. To create a high-fidelity
+underwater environment, we placed 3D meshes of corals on
+the ocean floor in the UWsim simulator [26]. To demonstrate
+the algorithms, the corals contain two species.
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:49:05 UTC from IEEE Xplore. Restrictions apply.
+(a) (b) (c)
+Fig. 5. The training statistics of the PPO algorithm trained with the information-theoretic reward for 200 iterations. (a) The reward value as the number of
+iteration increases. (b) The map entropy of each iteration (the lower the better). (c) The total number of corals detected in all frames during each iteration.
+A. YOLOv3 Evaluation
+The input image dimension is re-sized to be 416×416 to
+fit the requirement of the computation process of YOLOv3.
+We collected 50 images for training and additional 20 images
+for evaluation. During the collection of training and evaluation
+images, we set the light attenuation parameter to 0. The
+camera is mounted underneath the AUV with a downward
+looking angle of 60 degrees. However, for the monitoring
+process, the camera viewing angle is different from the one
+used in the training process (refer to Section IV-A). We need
+to ensure that the detector is capable of handling different
+camera viewing angles. In addition, to make the experiment
+more realistic, we increase the attenuation parameter so that
+the images captured by the camera appear darker.
+We have evaluated the YOLOv3 performance in the coral
+detection scenario. Some sampled detection results are shown
+in Fig. 4. The top and bottom rows represent the visual
+images captured in the training and testing scenes, respectively.
+It can be seen that the testing and training scenes
+have two major differences: first, the field of view of the
+camera is smaller in the testing environment; second, the
+training environment has no light attenuation. Despite these
+differences, the detector can still detect most of the corals
+correctly as shown in the bottom row of Fig. 4.
+B. Experimental Results on Environmental Exploration and
+Coral Detection
+In this section, we evaluate the performance of the AUV
+trained by the proposed reward function in terms of the
+amount of map entropy reduction and the number of observed
+corals.
+1) Experimental setup: The width and height of the
+simulated environment is set to be 120m and 80m. We
+operated the vehicle to keep 10m above the simulated ocean
+floor. The dimension of each grid mi is set to be 4m×4m
+so that there are 30×20 grids. We use two fully-connected
+neural networks with two hidden layers (with size of 512
+and 1024, respectively) to parameterize the value function
+and the policy. We use the learning rate of 0.0001 to train
+the networks for 200 iterations. Since the environment map
+is large, this task entails a long horizon to complete. By
+horizon, we mean that the AUV performs H actions before
+updating the parameters of the networks. We set the horizon
+to be H = 2048×10.
+(a)
+(b)
+Fig. 6. Statistics of the amount of map entropy and the total number of
+detected corals are shown in (a) and (b), respectively. Results are averaged
+over 10 test trials and each trial has a maximum H = 2048×80 steps.
+2) RL Training Results: To evaluate the performance of
+our information-theoretic reward function, we first show the
+training statistics of our proposed approach in Fig. 5. It shows
+three different metrics over the 200 iterations of training.
+Fig. 5(a) shows the reward (Eq. 5(a)) increases as the
+number of iterations increases. This indicates that the robot
+is able to learn useful actions based on our reward function.
+In addition to the total reward, we also plot the curves
+of the two components included in our reward function.
+Specifically, the trend of the map entropy reduction during
+training is shown in Fig. 5(b). The revealed global entropy
+reduction implies that the vehicle is able to explore more
+areas instead of exploiting a small local region. Fig. 5(c)
+describes the number of detected corals. We can see that
+along the vehicle’s environmental exploration, it also tends
+to maximize coral detection. (Note, since YOLOv3 detector
+is not able distinguish if a coral has been detected earlier,
+Fig 5(c) is the result that accumulates all corals detected
+within all frames at each training iteration.)
+3) RL Testing Results: We also compare the RL performance
+with a longer horizon (H = 2048×80) than the one
+used during training. The baseline of this comparison is
+a random walk action policy with a zero-reward function.
+Namely, at every time step, this robot executes an action
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:49:05 UTC from IEEE Xplore. Restrictions apply.
+(a) (b) (c)
+Fig. 7. Four sampled trajectories from the 10 test runs of differing rewarding approaches. Different sampled trajectories are shown in different colors.
+(a) The trajectories of the robot trained with the proposed information-theoretic reward function. (b) The trajectories of the robot trained with the heuristic
+reward function. (c) The trajectories of the random walks (0 reward).
+where the linear velocity and angular velocity are uniformly
+sampled from [0m/s,4.0m/s] and [−πrad/s,πrad/s],
+respectively. To further evaluate the performance of our
+proposed approach, we train the AUV with a heuristic reward
+function which encourages the movement of the vehicle
+R(s,a) = |o|−|v−vd|, (10)
+where vd is the desired linear velocity. This reward function
+encourages the AUV to move at a constant speed.
+We use the number of detected corals and the map entropy
+as metrics for performance evaluation because these two
+values are of the most interest in our task. During testing,
+when the AUV is out of the environment boundary or
+the number of the maximum steps has been reached, we
+randomly reset the pose of the vehicle to be within a small
+region around the center of the map as the starting pose for
+the next testing iteration. In Fig. 6(a), we plot the comparison
+of the map entropy of the three rewarding schemes. The
+result shows that the RL trained with the proposed reward
+function has the minimum entropy, indicating that the AUV
+is able to explore more and larger areas. The number of
+detected corals (averaged across the 10 trials) is shown in
+Fig. 6(b). The RL trained with the heuristic reward function
+(Eq. (10)) has the maximum number of coral observations.
+This is because the robot only focuses on locally explored
+areas without gaining much information about a larger scope
+of the environment, which is an undesired behavior.
+Similar trends can also be observed in Fig. 7 where
+we sampled four trajectories for each rewarding method.
+The trajectories of the heuristic reward function shown in
+Fig. 7(b) imply that the AUV is only able to monitor the
+corals within a small region. Our proposed reward function
+allows the vehicle to first focus on a local area (see the area
+with dense trajectories). After the local area is explored,
+the vehicle continues to search for more corals in those
+unexplored parts of the environment.
+VI. CONCLUSION AND FUTURE WORK
+We present a framework that integrates object detection,
+occupancy grid mapping, and reinforcement learning approaches
+to enable an AUV to explore and monitor coral
+habitats efficiently. To enable the vehicle to adjudicate decisions
+between exploration and exploitation, we propose a
+reward function that combines both an information-theoretic
+objective for coral searching and an ingredient that encourages
+coral detection. We qualitatively show that our proposed
+approach achieves a good performance even by training with
+a small number of images (50 images in total) collected in
+the simulator.

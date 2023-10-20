@@ -1,0 +1,365 @@
+&&&&&&&14.Autonomous Robotic Exploration of Coral Reefs
+using a Visual Attention-driven Strategy for
+Detecting and Tracking Regions of Interest
+Alejandro Maldonado-Ram´ırez and L. Abril Torres-M´endez
+Robotics and Advanced Manufacturing Group
+CINVESTAV Campus Saltillo
+Ramos Arizpe, Coahuila, M´exico 25900
+Email: {alejandro.maldonado, abril.torres}@cinvestav.edu.mx
+Abstract—Visual-based autonomous robotic exploration of
+unstructured and highly dynamic environments is a complex
+task. We present an approach to carry out an attention-driven
+exploration of underwater environments. This work is aimed
+to grant autonomy to an exploring agent in terms of deciding
+where to move in function of relevant visual information. This
+way we could obtain close video-observations of regions of
+interest in coral reefs in order to diagnose disease or physical
+damage. Our approach first detects relevant points from the
+images the vehicle is capturing, this is achieved by utilizing a
+visual attention model adapted to work on underwater scenes.
+Then, a particular region of interest can be quickly and robustly
+tracked by using superpixel descriptors, which are associated
+to each of the relevant points. The tracking continues as long
+as it results interesting for the visual attention algorithm. The
+field experimental results show the effectiveness of the proposed
+approach.
+I. INTRODUCTION
+One of the key aspects of having an integral robotic system
+is autonomy. Although, a high level of autonomy has been
+reached in mobile robotics, it still remains as an open problem
+in diverse fields. In particular, the autonomous navigation
+through unknown environments can be inherently considered
+as an exploration. When an exploration task is faced, human
+navigation is commonly lead by those features that catch our
+attention. If we do not have an specific task to perform, we
+could simply wander around the environment driven by our
+curiosity or even by a more inner desire (for example, if we are
+hungry we may begin to search for food). This work is aimed
+to reach this kind of autonomy on an Autonomous Underwater
+Vehicle (AUV) for coral reef exploration. To achieve this, it
+is important to be able to identify the relevant regions from
+the scene even when no information about them is available.
+Our approach relies on a computational visual attention model
+which emulates the human visual attention system. This means
+that an algorithm will be capable of detecting a image region
+that will likely draw the attention of a person. For this work,
+we want the relevant regions to lead the motion of an AUV
+with the aim to perform a coral reef exploration in a curious
+human-like manner. However, it is important to notice that
+the exploration of coral reefs is a complex task due to the
+inherent properties in this kind of environments, such as:
+color distortion, poor visibility, suspended particles and lack of
+structure among others. Furthermore, coral reefs have a high
+diversity of color and unstructured information, which makes
+difficult to determine what the most relevant part would be. The
+visual attention algorithm we propose was designed by keeping
+in mind those conditions to obtain a good performance.
+Besides of detecting regions of interest, it is also important
+to track the same region of interest during several frames.
+The tracking should be fast in computational time and robust
+in order to obtain useful video-observations while avoiding
+erratic motions in the vehicle. We use a descriptor based on a
+superpixels segmentation [1] to help tracking a detected region.
+The rest of this paper is organized as follows. First, in
+Section II, a short overview of the application of visual attention
+system in underwater task is given. Section III describes
+our proposed method in detail. In Section IV, we give the
+experimental results obtained during the field trials. Finally
+the conclusion and future work is presented in Section V.
+II. RELATED WORK
+Visual attention is a selective process that allows us to
+determine regions of interest in a scene according to visual
+stimuli. Nowadays, there are several visual attention models,
+but two of the most known are the Neuromorphic Vision
+Toolkit (NVT) [2] and the Visual Object detection with a
+CompUtational attention System (VOCUS) [3]. This kind
+of models has been used on underwater applications. For
+example, in [4] a visual attention model is used to detect
+frames of interest in a long video stream, i.e., instead of having
+a human watching hours of video to identify interesting frames,
+they use a visual attention algorithm to extract the potentially
+interesting frames. In [5], the authors use a visual attention
+algorithm to detect objects that could draw the attention of a
+human. Both of these work utilize the NVT [2] visual attention
+model on videos recorded by a Remotely Operated Vehicle
+(ROV). In [6], authors proposed a visual attention model to
+detect Norway lobsters and help scientist to quantify them. All
+the above mentioned work use a visual attention models for
+aiding humans in the task of analysis of a video streaming. In
+our case, we are interested on using a visual attention model in
+an online manner to guide the motion of an AUV with the aim
+of increasing the autonomy of underwater robotic systems at
+the moment of deciding where the exploration should proceed.
+The visual attention models are useful when there is not
+enough prior information about the regions of interest and the
+environment to explore. They tend to find what is more relevant
+978-1-4799-8736-8/15/$31.00 ©2015 IEEE
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:48:03 UTC from IEEE Xplore. Restrictions apply.
+Fig. 1. A general diagram of the proposed methodology.
+in terms of general criteria such as colors, intensities and/or
+orientation, among other features. More detailed information
+about the foundations of computational visual attention models
+can be found in [7]. An overview of the utilization of visual
+attention models under a robotic context can be found in [8].
+III. METHODOLOGY
+A general diagram of the proposed system is depicted in
+Fig. 1. The robot’s camera capture the visual information,
+which is processed by the visual attention system to detect
+and track the Region of Interest (RoI). The position of the RoI
+in the image is used by the Visual Controller. This controller
+determines the desired orientation of the robotic system. The
+desired values feed the inner control loop of the system. More
+detailed information about each of the part are presented in
+the following sections.
+A. Visual Attention System
+A computational visual attention algorithm detects relevant
+regions in an image emulating the human visual attention. The
+proposed methodology for detection and tracking of regions
+of interest it is summarized in Fig. 2. Our visual attention
+model relies in some of the key ideas of Itti’s and Frintop’s
+visual attention models [2], [3]. The general process to extract
+relevant regions on an image can be summarized as [2]:
+1. Image filtering to remove noise in the image.
+2. Extraction of features, for example: intensity, colors,
+orientation or motion.
+3. Calculation of Gausssian pyramids for each feature.
+4. Applying center-surround differences over each level
+of the pyramids to highlight regions that stand out of
+their surround.
+5. Summation of all the resulting pyramid’s images to
+obtain a saliency map.
+6. Localizing the most salient region (brightest part of
+the image) on the saliency map.
+Modifications of the general process were made in the
+proposed visual attention system because of the conditions of
+the environment. Typically, a natural underwater environment
+lack of defined orientation and shape unlike man-made indoor
+environments where planes and lines can be found. Also, the
+intensity of the light reaching these benthic environments is
+not constant. For that reason, our attention model leaves aside
+commonly used intensity and orientation features, thus strongly
+relying on color information to detect regions of interest. Since
+the degradation of color and the poor visibility is inherent in
+this type of environments at distances and depth greater than
+10 meters [9], it is crucial to select an appropriate color space
+to achieve an effortlessly underwater image enhancement.
+Similar as in [3], we use the CIELab color space, which is
+a perceptual uniform color space. The a and b channels of this
+color space naturally comprises contrast colors (red-green and
+yellow-blue), which is suitable for underwater image analysis
+and processing. For calculating the saliency map, we use the
+red, green, yellow and blue colors as features. The colors are
+extracted as specified in [3]. A visual attention algorithm gives
+us a saliency map that can be used to identify the relevant
+parts on a scene (see left side of the diagram in Fig. 2 for an
+example of a saliency map). However, we are also interested
+in tracking the same relevant part along subsequent frames.
+Thus, to track a RoI, we need to have a region descriptor
+that takes into account color and position. It turns out that
+the use of superpixels is suitable for this task. Superpixels
+are defined by their average color and position. To generate
+the superpixels the Simple Linear Iterative Clustering (SLIC)
+superpixel segmentation algorithm [1] is used. Then, a RoI can
+be described by the superpixel it belongs to. To track a given
+RoI at frame t−1, we search for it among the k most relevant
+regions found by in the saliency map of frame t. In Fig. 3 the
+detection and tracking of a RoI is exemplified. A more detailed
+explanation of this part of the model as well as results in an
+offline manner can be found in our previous work in [10].
+In this paper, we have also added the state of the robot in
+order to perform the tracking of the RoI. Before searching
+for the RoI, the increment of the yaw angle of the robot
+from the last frame t − 1 to the current frame t is obtained
+(Δψ = ψt−ψt−1). On one hand, if Δψ is greater than half the
+field of view (FoV) of the camera, it is likely that the robot is
+looking to a completely different scene than the one from the
+frame t−1. Therefore, the visual attention algorithm will not
+search for the last RoI, instead it will determine a new one.
+On the other hand, if Δψ < FoV
+2 , then the visual attention
+algorithm will search for the last RoI around the left or the
+right side of the image depending of the sign of Δψ. This
+modification was added to avoid the cases where the visual
+attention algorithm is attempting to search for a region of
+interest that likely is not in the current image because an abrupt
+change of robot’s orientation, e.g. an strong ocean current that
+drastically changes the robot’s orientation.
+B. Visual Controller
+This controller takes the RoI’s center coordinates as input
+and calculates the commands to move the robot such that the
+RoI stays in the image’s central region defined by a threshold
+, as depicted in Fig. 4. Particularly, it calculates the yaw and
+speed commands for the robot’s motion controller. Considering
+the position of the RoI in the image as pRoI = (uRoI, vRoI),
+a mapping over the x−coordinate is done as shown in the
+following equation:
+xRoI =
+2uRoI
+cols
+− 1, (1)
+where cols is the number of columns in the input image. The
+resulting xRoI ∈ [−1, 1] is independent of the size of the image
+because of the division by cols in equation (1). The desired
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:48:03 UTC from IEEE Xplore. Restrictions apply.
+Fig. 2. General diagram of the proposed visual attention system.
+Fig. 3. An example of the detection and tracking of a RoI by using the
+information of the previous frame.
+yaw command ψd is calculated in terms of xRoi as shown in
+the following equation:
+ψd =
+
+ψt + k1xRoI if |xRoI| ≥ 
+ψt if |xRoI| < 
+, (2)
+where ψt is the current yaw angle of the robot as measured by
+the Inertial Measurement Unit (IMU) and k1 is tunable positive
+gain. As can be seen in (2), when xRoI is within the threshold
+, the desired yaw angle remains unmodified, otherwise the
+AUV changes its direction of movement accordingly to xRoI.
+Considering the number of frames that the same or similar
+regions has been tracked (nRoI), the commanded forward
+speed sd is calculated as:
+sd =
+
+sdef − k2nRoI if sdef > k2nRoI
+0 if sdef ≤ k2nRoI
+, (3)
+where k2 is a tunable positive gain and sdef is the default
+speed for exploration. It can be seen in 3 that when nRoI
+increases, the commanded forward speed tends to zero. This
+behavior has the objective of allowing the robot to stay in a
+hovering position during few frames to gather images from
+the same or similar regions of interest. To prevent that the
+robot gets stuck exploring the same place because of the speed
+reduction, sd returns to its default value when nRoI is greater
+than a predefined value.
+Fig. 4. Desired task: to locate the Region of Interest in the central region of
+the image. The width of the central region is 2.
+C. AUV’s Motion Controller
+A PD-controller is used to control the robot’s orientation.
+The desired yaw orientation is received from the Visual Controller
+and the roll and pitch angles are set to zero, which
+means that the motion of the robot is limited to its XY plane.
+The PD-controller can be substituted by other more advanced
+controllers for underwater vehicles, however for our purposes
+it worked reasonably well.
+Finally, as the robot it is not equipped with an instrument
+to measure its forward speed, the range of amplitude of the
+robot’s fins is modified to increase or decrease the forward
+speed of the robot. The amplitudes are set in terms of the
+speed commanded sd by the visual controller. The smaller the
+fin’s amplitude is, the slower the robot will move.
+IV. RESULTS AND DISCUSSION
+A. Field testing and experimental platform
+The proposed approach was tested on the amphibious robot
+called Mexibot, which belongs to the family of Aqua robots
+[11]. The robot’s propulsion is based on the oscillation of six
+paddles providing 5 degrees of freedom. Mexibot can operate
+at a maximum depth of 35m.
+All the trials were performed in coral reefs belonging to
+the second largest coral reef system, located in Costa Maya,
+Mexico. All the experiments were done in a depth range from
+5 to 18 meters under real and uncontrolled conditions.
+The method was implemented under the Robotic Operating
+System (R.O.S.). The visual controller, the visual attention
+system and the motion controller were implemented as nodes
+under the R.O.S. architecture. This means that all the components
+of the method work asynchronously. The average latency
+of the whole algorithm was about 0.3s. For our purpose this
+latency does not represent an issue because the robot moves
+to a low speed (< 1 m/s).
+In Fig. 5, the x−coordinate of the RoI is shown. As it
+can be seen, this coordinate tends to stay in the green shaded
+region which represents the threshold  = 0.3. This means
+that in fact, the AUV moved such that the RoI was tracked
+during a period of time. Also, in the lower plot of the Fig.
+5, the yaw angle of the robot as well as the command yaw
+angle are shown. It can be seen how the robotic system was
+following the desired yaw calculated by the visual controller.
+The blue boxes enclose the time lapses (intervals) when the
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:48:03 UTC from IEEE Xplore. Restrictions apply.
+Fig. 5. The x−coordinate of the ROI is shown in the upper plot. It can be seen
+how the coordinate tends to stay within the threshold  = 0.3 (green shaded
+region). The lower plot shows the yaw angle of the robot and the desired yaw
+angle calculated by the visual controller. The blue rectangles enclose the time
+lapses when the same region of interest was tracked.
+Fig. 6. The RoI detected at the beginning and end of the time lapses enclosed
+on the blue rectangles of the Fig. 5 are shown. It can be seen how the same
+region of interest is keep in the field view of the robot.
+same RoI was tracked. In average, the regions were tracked
+about 10 seconds. It is a good tracking time considering all
+the hindering environmental conditions.
+The first and last frame during the time lapse the same
+RoI was tracked are shown. It can be seen how in the first
+frame the RoI is detected far from the AUV camera and by
+the last frame the RoI ends up near of the robot. It is important
+to mention that during the navigation, sometimes the robotic
+system was near of colliding with protrusions of coral reef, for
+example in the cases of the images A and C of the Fig. 6 it can
+be seen how near the RoI is from the camera. In these cases
+a diver has to intervene to avoid the imminent collision. This
+indicates us the importance of adding a collision avoidance
+method to be able to perform a more complete exploration of
+an environment.
+B. Discussion
+We want to highlight the importance of the utilization of
+a visual attention algorithm as the main part to guide a robot
+navigation in a coral reef for exploration purposes. One of
+the main advantages of this kind of algorithms is that they
+do not need to have prior information of the environment. For
+example, the algorithm does not need to know any information
+of landmark to detect. Instead, the model determines automatically
+the most relevant region in terms of some general criteria
+such as color, intensity, orientation. Specifically, our algorithm
+detects relevant regions in terms of colors.
+Something important to mention is that the sole fact of
+detecting the most relevant region on one frame is not enough
+to lead the motion of the robot, it is also necessary to track the
+same region along the subsequent frames as long as possible.
+With that in mind, a superpixel descriptor is used. This way
+we can have the same or similar regions of interest detected
+in consecutive frames. Another aspect to highlight of the
+proposed methodology is the flexibility of the system when
+the region to follow is lost or no longer visible. In those cases,
+a new region of interest is automatically detected. This action
+resembles the natural behavior of selective attention in living
+beings.
+Finally, an important limitation of the proposed method
+is that it does not incorporate a collision avoidance algorithm.
+Part of this is due to the lack of 3D information, particularly the
+distance from the camera to the region of interest. To compensate
+this drawback and keeping the whole method using only
+visual information the method for obstacle avoidance proposed
+in [12] has been considered to be implemented along the visual
+attention system.
+V. CONCLUSION AND FUTURE WORK
+We have presented a visual attention-driven navigation to
+perform an autonomous robotic exploration of coral reefs. The
+core of the presented work is the visual attention model that
+allows the robot to find and track regions of interest in an
+environment that lacks defined structure, has poor visibility
+and presents loss of color, among other challenges. The near
+real-time tracking of relevant features allows for a more
+efficient vehicle control as it helps to establish a set of suitable
+directions for the exploration. This way, the path that the robot
+follows is built in terms of the regions that draw its attention
+and is not defined a priori, as existing work do.
+We have successfully tested the proposed framework. The
+results show that, despite of the high diversity of visual
+information found in the coral reefs, our approach was able
+to identify the most relevant parts and track them. Since the
+proposed framework does not rely on a priori information
+about the structure of the coral reef or a map of it, it can be
+used in any underwater environment with good results in terms
+of exploring relevant regions. However, an integral scheme
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:48:03 UTC from IEEE Xplore. Restrictions apply.
+combining an obstacle avoidance approach with the attentiondriven
+exploration model is needed.
+As future work, we would like to improve the motion
+controller of the robotic system by using a controller based
+on behaviors to combine the attention-driven exploration and
+the collision avoidance.
+ACKNOWLEDGMENT
+We would like to thank CONACyT for their support and
+project funding (CB-220540). We also thank Mar Adentro
+Diving, Mahahual, for their support during our sea trials.

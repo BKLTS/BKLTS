@@ -1,0 +1,268 @@
+&&&&&&&11.Binocular Matching Method for Detecting and
+Locating Marine Resources Using Binocular Cameras
+and Deep Learning
+Xiang Li1*, Yejun Kou1 and Yanchun Liang1
+1Zhuhai College of Science and Technology, Zhuhai, Guangdong province, China
+*lixiang@zcst.edu.cn
+Abstract. It is well known that Artificial Intelligence and
+underwater robots play a significant role in energy exploration.
+This paper proposes a novel method using binocular cameras to
+detect, locate, and track marine resources. The method combines
+the YOLOv5 object detection method with the BM algorithm
+binocular ranging method. The method then uses a neural network
+to identify and detect the position of the target in the image,
+matches the detection framework with the depth chart, and
+employs a weighted average model to calculate the relative
+distance between the target and the object detected by the camera.
+Finally, underwater robots can use the relative distance to locate
+and track marine resources.
+Keywords- Binocular camera, YOLOv5, Deep learning,
+Underwater vision
+I. INTRODUCTION
+Machine vision technology has entered a period of rapid
+development and it is known as the “eye” of intelligent
+manufacturing. Consequently, machine vision is being
+extensively utilized in the field of intelligent manufacturing,
+and there is closer integration with intelligent manufacturing.
+As the oceans of the world continue to be developed rapidly,
+underwater robot technology [1] has received unprecedented
+attention and research as the most important means for human
+exploration of the oceans. The research of underwater
+technology has become one of the key focus points of high-tech
+research, and intelligent underwater robots play a vital role on
+efficient underwater work platforms in the development and
+utilization of the oceans.
+A. Research background
+Using the parallax principle, a binocular camera was used to
+match the horizontal distance of pixels in the center of the block
+[2], and the relative distance was calculated. The further the
+distance from the object, the smaller the parallax; on the
+contrary, the closer the distance from the object, the greater the
+parallax. The size of the parallax corresponds to the distance
+between the object and the eye. The distance perception of the
+target object by the binocular system can ensure accurate
+measurements. In case obstacles are encountered, the binocular
+camera can send an alert or stop as necessary based on the
+changing distance information received. Therefore, binocular
+ranging technology is widely used in underwater environments.
+This study proposes a new scheme to attach a binocular
+camera on an underwater robot (BlueROV2). A target detection
+method based on YOLOv5 neural networks was combined with
+a binocular ranging method to calculate parallax with binocular
+matching to detect, locate and track marine life.
+The dynamic and static detection performance was
+enhanced by adjusting the detection block size. The average
+error of dynamic monitoring was only 10mm in clean water and
+13mm in muddy water. Also, the effectiveness of the
+compensation function was verified by comparison.
+II. MATERIALS AND METHODS
+A. YOLOv5 Undersea Target Detection Method
+1)Model introduction. The YOLO model, which was
+described in a paper published by Joseph Redmon in
+CVPR2016 [3], is a real-time target detection method that uses
+a single neural network to predict bounding boxes and
+probabilities directly from a complete image. The YOLOv5 is
+an improved model released by Ultraytics in May 2020, and this
+model fully benefited from the established Pytorch ecosystem
+because it was implemented in the Pytorch framework. The
+model weight file is only 27MB, which can be very easily
+embedded in a modern device.
+YOLOV5 network and general YOLO series algorithms
+belong to the category of one-step detection algorithm. In terms
+of data preprocessing, YOLOV5 follows the mosaic image
+online enhancement method proposed by YOLOV4, aiming to
+increase the number of small targets in a single batch, improve
+the network's ability to identify small targets, and also increase
+the data information in a single batch; In the backbone structure,
+FPN (feature pyramid) structure is used to extract features from
+the bottom up; In the neck structure, a top-down PAN (path
+fusion) structure is used to shorten the path of the low level
+feature flow to the prediction level; In the head structure and
+prediction structure, the features are integrated, and the lowlevel
+features of different receptive fields are fused through
+three paths: prediction 1, prediction 2, and prediction 3. Finally,
+the boundary box information and category information of the
+defect target are output. The CSP layer is used to replace the
+residual connection layer.
+2) Method for Data Collection. The camera was placed in a
+real underwater environment, and the primary data set was
+collected through multi-angle photography and the underwater
+video frame sampling method.
+Underwater images are generally blurry. To solve this
+problem, we propose a new and effective strategy to enhance
+2023 4th International Conference on Computer Vision, Image and Deep Learning (CVIDL)
+979-8-3503-2644-4/23/$31.00 ©2023 IEEE 381
+2023 4th International Conference on Computer Vision, Image and Deep Learning (CVIDL) | 979-8-3503-2644-4/23/$31.00 ©2023 IEEE | DOI: 10.1109/CVIDL58838.2023.10167128
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:38:30 UTC from IEEE Xplore. Restrictions apply.
+the image data as shown in Fig.1. Compared with the procedure
+of adding extra network structures, the data enhancement
+method is simple and effective. The experimental results also
+showed that geometric transformation and optical
+transformation effectively improved the model’s ability to
+detect objects through the use of enhanced data.
+The camera was placed in a real underwater environment,
+and the primary data set was collected through multi-angle
+photography and the underwater video frame sampling method.
+Underwater images are generally blurry. To solve this
+problem, we propose a new and effective strategy to enhance
+the image data as shown in Fig.1. Compared with the procedure
+of adding extra network structures, the data enhancement
+method is simple and effective. The experimental results also
+showed that geometric transformation and optical
+transformation effectively improved the model’s ability to
+detect objects through the use of enhanced data.
+Figure 1. Enhanced data diagram
+3) Results of underwater detection. In this experiment as
+shown in Fig.2, Authors collected a small number of data sets
+in order to verify the feasibility of the proposed method which
+combines target detection with binocular ranging. Incremental
+training was conducted on YOLOv5s.pt using the data
+enhancement method which was described in the previous
+paragraph.
+Figure 2. Actual detection in an underwater environment
+B. Binocular Camera Underwater Target Detection Method
+1) The Fundamentals of Camera Calibration. The currently
+used ranging methods that are representative of the field mainly
+have the following characteristics: Uses a monocular camera
+along with a laser receiver [4]. Although this method is simple
+and can accurately collect data, the laser is still affected by the
+strong absorption and scattering effects of the water. Therefore,
+this method cannot be used in underwater environments.
+Uses sonar to obtain real-time positioning underwater [5].
+This method is widely used in submarines and underwater
+detection devices. The commonly used sonar is the side-scan
+sonar, and images can be added by drag-and-drop. The images
+will be fuzzy in shallow water or in close-range situations
+because of its long wavelength. 3D sonar, such as Coda
+Octopus's Real-time 3D Echoscope, is expensive and requires a
+strong method for processing the return signal.
+Uses model-based pattern matching recognition techniques.
+For this technique, a large amount of data needs to be measured
+and collected on the features of different kinds of sea life, then
+the relevant data is used to complete the pre-modeling
+procedure. Although the matching performance is good,
+significant calculation power is still required.
+Uses a binocular stereo-matching method based on image
+parallax [6]. This approach obtains parallax images by stereomatching
+two monocular cameras. The 3D point cloud is
+derived and a 3D image is constructed. Then the distance to the
+target object is calculated according to the principle of similar
+triangles. This is a low-cost method that only requires a
+stereoscopic camera to capture the images. Compared with
+other stereo-matching methods, the block matching method has
+fast ranging speed and the level of accuracy satisfies the
+application requirements.
+2) Binocular Ranging Process. Monocular camera
+calibration: The main purpose of camera calibration is to derive
+a relationship between the camera coordinates in the ideal
+coordinate system and the position and direction of the camera
+in the World Coordinate System as shown in Fig.3.
+Figure 3. Camera coordinates and world coordinates
+As shown in Fig.4-5, based on the “Flexible Camera
+Calibration by Viewing a Plane from Unknown Orientations”
+method, the TOOLBOX from MATLAB was used to calibrate
+and calculate the internal parameters of the monocular camera.
+(a)
+382
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:38:30 UTC from IEEE Xplore. Restrictions apply.
+(b)
+Figure 4. The internal parameters of the monocular camera:
+(a) Calibrate with binocular camera (world-centered)
+(b) Calibrate with monocular camera (camera-centered)
+Figure 5. The relative position of the two cameras and the 28 vice boards is
+shown in the figure: Binocular camera calibration diagram
+After completing the separate calibration of the left and right
+monocular cameras, the next step was to use “TOOLBOX_calib”
+from Calibration TOOLBOX to continue the binocular camera
+calibration process.
+Firstly, the left camera was chosen as the fixed reference
+position. Then, the rotation matrix R and the translation matrix
+T of the coordinate transformation from the right camera to the
+left camera were calculated respectively.
+Finally, the camera external parameter matrix W can be
+determined according to the following equation. The calibration
+of the camera has been completed.
+𝑾 = 􁈾𝑹 𝑻􁈿 (1)
+3) Actual detection performance
+Due to the light absorption and scattering that is inherent in
+an underwater environment, underwater imaging is
+characterized by uneven illumination and unclear features. As
+shown in Table.1, the measurement error is found by comparing
+the distance measured by the camera with the actual distance
+under water. As the actual distance increases, the measurement
+error exhibits a slightly nonlinearly trend. Therefore, the error
+correction function can be obtained by fitting the measured
+distance against the actual distance.
+TABLE 1. ERROR BETWEEN ACTUAL DISTANCE AND MEASURED DISTANCE
+Measurement
+type First to fourth Fifth to eighth Ninth to
+twelfth
+Actual distance
+(cm)
+25.00 45.00 65.00
+30.00 50.00 70.00
+35.00 55.00 75.00
+40.00 60.00 80.00
+Measured
+distance (cm)
+22.18 38.00 55.35
+25.30 42.01 59.60
+29.38 46.33 63.50
+33.83 50.80 68.50
+Error (cm)
+2.82 7.00 9.65
+4.70 7.99 10.40
+5.62 8.67 11.50
+6.17 9.20 11.50
+III. EXPERIMENT RESULTS
+A. Static detection
+The code in the YOLOv5 detection method was tested and
+repackaged, and the binocular ranging algorithm was added into
+the code. First, the algorithm identified the object category and
+drew a detection box around the object. Next, the binocular
+ranging algorithm located the object position on the generated
+depth map within the detection box, and determined the final
+distance using weighted averages of the effective values on the
+outer edge of the object. Considering that the detection process
+was executed using the AUV's close-range target recognition
+and capture functions, the detection interval was set between
+30cm and 100cm.
+In the static detection experiment, markings were placed at
+200mm intervals on the bottom of a swimming pool and plastic
+water bottles and mugs were used as the test objects. The
+camera took pictures of the targets at each distance interval,
+detecting the position and category of the object and calculating
+the distance.
+Figure 6. Static detection results of plastic bottles at a distance of 800mm, 600mm, 400mm and 300mm (before correction)
+383
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 12:38:30 UTC from IEEE Xplore. Restrictions apply.
+Figure 7. Static detection results of plastic bottles at a distance of 800mm, 600mm, 400mm and 300mm (after correction)
+Figure 8. Static detection results of Mugs at a distance of 800mm, 600mm, 400mm and 300mm(before correction)
+Figure 9. Static detection results of Mugs at a distance of 800mm, 600mm, 400mm and 300mm (after correction)
+As shown in Fig.6-9, the experimental results show that the
+system achieved good detection performance for static
+underwater targets that were within a range of 300mm-800mm,
+with an error within 2%. By comparing the ranging results
+before and after the correction, it can be proven that the error
+correction scheme for static detection had good performance.
+IV. DISCUSSION
+This study proposes a new method combining YOLOv5
+with a stereo-matching algorithm based on image parallax.
+Firstly, a neural network was used to identify and detect the
+position of an object in an image. Then, by matching the
+detection box with the depth map, the relative distance between
+the target and the camera was calculated by the weighted
+average method. A large amount of experimental data was
+collected and the results show that the method achieved good
+performance in both static and dynamic conditions with short
+detection time. In summary, this new idea is feasible and can be
+effective for real-time target detection of AUV.
+V. CONCLUSION
+The experimental results show that the new method
+proposed in this paper, which combines YOLOv5 with image
+disparity based stereo matching algorithm, is feasible and can
+be effectively used for real-time object detection in AUV. In the
+future, it is necessary to conduct experiments in actual marine
+environments and dynamic object detection experiments to
+further verify the feasibility of this method.
+ACKNOWLEDGMENTS

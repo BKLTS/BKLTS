@@ -1,0 +1,278 @@
+&&&&&&&1.Real-time Detecting Method of Marine Small Object
+with Underwater Robot Vision
+Fengqiang Xu, Xueyan Ding, Jinjia Peng, Guoliang Yuan, Yafei Wang, Jun Zhang, Xianping Fu
+Information Science and Technology College
+Dalian Maritime University
+Dalian 116026, China
+{xfq, dingxueyan meow, pengjinjia, yuan, wangyafei, william, fxp}@dlmu.edu.cn
+Abstract—Detection and counting small objects using underwater
+robot draw an appealing attention because of its urgent
+demands in marine aquaculture. Because this challenge problem
+must be solved before the underwater robot can be used to catch
+seafood in practice instead of diver. This paper proposed a novel
+method using Faster R-CNN and kernelized correlation filter
+(KCF) tracking algorithm to detect seafood objects, such as sea
+cucumber, sea urchin, and scallop and so on in real time. Firstly,
+we trained an accurate and stable Faster R-CNN detector with
+VGG model using underwater image database, which is built by
+ourselves. Next, we recognized and tracked the seafood objects in
+order to fetch them using underwater robot vision in naturalistic
+ocean environment. The experimental results show the proposed
+method can recognized and catch seafood in real time using our
+integrated underwater robot.
+Keywords—Marine small target; Object detection; Object tracking;
+Convolutional neural network; Underwater robot
+I. INTRODUCTION
+Recently, using underwater robot to detect and to catch
+marine small object is a hot research topic,because it is
+an efficient solution to replace the diver to capture seafood
+in marine aquaculture[1]. To reach this goal, there are two
+problems need to be solved: (1) detection of marine small
+object and (2) development of underwater robot.
+Poor visibility of underwater image captured by cameras
+results in a difficult task for perception of ocean environments
+and recognizing underwater objects[2]. Due to this reason,
+traditional detection methods based on image feature can‘t
+perform well. Motivated by the fact that Convolutional Neural
+Networks (CNNs) have produced impressive performance improvements
+in several areas, such as face recognition, pedestrian
+detection, autonomous driving and so on. This paper adopt
+Convolutional Neural Network to detect marine small object.
+In the past several years, many advanced object detection
+method based on CNNs have been proposed, including RCNN[
+3], Fast R-CNN[4], Faster R-CNN[5], etc. The Faster RCNN
+is state-of-the-art in object detection. And several method
+have been proposed in the foundation of it. In this paper, we
+adopt Faster R-CNN as the detector to detect seafood.
+This work was supported in part by the National Natural Science Foundation
+of China Grant 61370142 and Grant 61272368, by the Fundamental Research
+Funds for the Central Universities Grant 3132016352, by the Fundamental
+Research of Ministry of Transport of P. R. China Grant 2015329225300.
+Different underwater robots have been created for ocean‘s
+exploration and exploitation. However, almost of them are used
+to observe the marine object or capture images and videos. It is
+hard to find the application of automatic detection in underwater
+robot. Thus, using underwater robot to automatically catch
+marine small object still face a huge challenge. To conquer this
+problem, it is supposed to develop a underwater robot which
+have ability to detect marine small object.
+To deal with above problems, in this paper, we proposed
+a novel method using Faster R-CNN and KCF tracking algorithm
+to detect marine objects. Firstly, we train a detector
+on our underwater dataset to produce the bounding boxes and
+categories of the object. Then we train a tracker based on
+the KCF to track and count the object. Finally, this method is
+adopted to detect marine objects using underwater robot vision
+in real time.
+II. RELATED WORK
+A. Object detection
+According to whether need region proposal, State-of-theart
+object detection methods based on CNN can be divided
+into two groups: (1) region proposal based methods and (2)
+proposal-free methods[6]. Proposal based methods, including
+R-CNN, Fast R-CNN, Faster R-CNN, achieve excellent object
+detection accuracy. R-CNN uses selective search to first generate
+potential object regions in an image and then perform
+classification on the proposed region. However, R-CNN requires
+high computational costs since each region is processed
+by the CNN network separately. Fast R-CNN builds deep
+convolutional networks to efficiently classify object proposals.
+Faster R-CNN introduces a Region Proposal Network(RPN)[5]
+that shares full-image convolutional features with the object
+bounds and scores at each position.
+Proposal-free methods, such as YOLO and SSD, have
+recently been proposed for real-time detection. These methods
+frame object detection as a regression problem which using
+a single neural network to detect object and category from
+full images in one evaluation. So, it can be optimized endto-
+end directly on detection performance. YOLO computes a
+global feature map and uses a fully-connected layer to predict
+objects classes and locations in a fixed set of regions[7]. SSD
+improves YOLO by adding layers of feature maps for each
+scale and using a convolutional filter for prediction[8].
+978-1-5386-1654-3/18/$31.00 ©2018 IEEE
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 11:34:13 UTC from IEEE Xplore. Restrictions apply.
+1.The control mainboard
+2. The buoyancy module
+3. The underwater propeller
+4. The LED lights
+5. The shell
+6. The buoyancy cables
+7. The underwater camera
+8. The manipulator
+8
+7
+3
+4
+1
+2
+6
+5
+2
+2
+(c)
+(a) (b)
+(d) (e)
+Fig. 1. The structure and view of our underwater robot.(a) is the top view of the robot; (d) is the structure of the underwater robot; (b) is the explanation of
+(d); (c) and (e) are captured under the water.
+B. Faster R-CNN
+In object detection, region-based CNN detection methods
+are now the main paradigm. Compared to traditional
+methodology, deep ConvNets have significantly improved the
+performance on image classification and object detection[3].
+The Faster R-CNN is state-of-the-art object detection network
+depends on region proposal algorithms to hypothesize object
+location. It creatively introduces a Region Proposal Network
+that shares full-image convolutional features with the detection
+network to reduce computational burden of proposal generation.
+The structure of The Faster R-CNN is consisted of two
+modules: (1)the Region Proposal Network and (2)the Fast RCNN
+object detection network. the RPN took an image(of
+any size) as input and outputted a set of rectangular object
+proposals, each with an objectness score[5]. And the Fast
+R-CNN object detection network[1] was adopt to refine the
+proposals.
+III. THE PROPOSED APPROACH
+A. The structure of underwater robot
+Recently, the research and development of remotely operated
+vehicle (ROV)[9] draws an attractive attention in marine
+aquaculture. It has urgent demands to adopt the underwater
+robot to detect and grab the marine organism. However, the
+manufacturing of the underwater robot is confronted with huge
+obstacle, because it needs to address additional issues from the
+ocean, such as undercurrent, variation of buoyancy and so on.
+To solve these problems, our underwater robot is constitutive
+of seven essential parts contained in the shell,which is
+showed in Fig.1. The control mainboard is the hub of signal
+communication which responsibilities are gathering signal
+information from the operating handle to command the device
+to work and responding to requirement, such as diving, turning
+direction, capturing video and so on. The underwater propellers
+are responsible for improving thrust to the robot, and the
+buoyancy module could conquer the gravity to keep balance.
+To capture high-quality video, the underwater camera is
+demanded to support 4K video recording. Both sides of the
+fuselage are equipped with LED lights to satisfy the shooting
+of underwater dark and turbid environment[9]. The buoyancy
+cables are ad hoc bridge for robot to connect with power supply
+and displayer. Once done with detection, we can operate the
+manipulator to accurately grab the object.
+B. Marine object detection based on Faster R-CNN
+Because of feature attenuation in underwater image, it is
+hard to detect marine objects. For detection algorithm based on
+region proposal, Faster R-CNN is classical and fundamental,
+which could extract abundant features from image and train as
+a powerful detector. Thus, we take advantage of Faster R-CNN
+as base framework to train our detector.
+In this paper, we adopt ImageNet dataset to pre-train the
+network and produce the parameters which are adopted to
+initialize our model. After then we make use of our own dataset
+collected by ourselves with underwater robot for training and
+testing. We generate the proposal regions and scores by RPN.
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 11:34:13 UTC from IEEE Xplore. Restrictions apply.
+(d) (e) (f)
+(a) (b) (c)
+sea cucumber:5; sea urchin:17; scallop:12 sea cucumber:4; sea urchin:8; scallop:11 sea cucumber:4; sea urchin:18; scallop:16
+sea cucumber:5; sea urchin:17; scallop:15 sea cucumber:5; sea urchin:8; scallop:12 sea cucumber:4; sea urchin:19; scallop:17
+Fig. 2. The experimental results of tracking and counting marine objects. The top images (a),(b) and (c) are the begin frames, and the bottom images (d),(e)
+and (f) are the next frames respectively relative to the above images. The boxes of sea cucumber, sea urchin and scallop are separately labeled with blue, red
+and yellow color. From (a) to (d), the total of ( sea cucumber, sea urchin, scallop) are varied from (5,17,12) to (5,17,15); From (b) to (e), the total of ( sea
+cucumber, sea urchin, scallop) are varied from (4,8,11) to (5,8,12); From (c) to (f), the total of ( sea cucumber, sea urchin, scallop) are varied from (4,18,16)
+to (4,19,17).
+In the RPN, the last shared convolutional layers of a pretrained
+network are followed by a 3 × 3 convolutional layer.
+Two sibling 1 × 1 convolutional layers are then added for
+classification and regression. After training our detector, we
+can generate and select the bounding boxes of the object target
+accurately for each frame.
+C. Marine object tracking and counting based on KCF
+Tracking is an important assignment for statistic of seafood
+target[10].And the kernelized correlation filters tracker achives
+very impressive results on Visual Tracker Benchmark[11].In
+this paper, we employ the KCF tracking algorithm to track
+marine objects. Firstly, we initialize KCF tracker with the
+bounding boxes of object getting by Faster R-CNN detection.
+Then we track the new object of the next frames by aforementioned
+tracker. Finally, the total of the seafood object should
+be produced.It is significant to figure out the density of the
+seafood in marine aquaculture.
+By calculating the distance d between the center location
+of the bounding box of the seafood objects from detection and
+tracking, we further calculate the result r (r = d/w, where w
+is the width of the input image). If r < λ (λ = 0.05, where λ
+is a threshold), they are regarded as the same one, otherwise
+the latter should be regarded as a new object.
+However, it is unreasonable to count directly, for instance
+the object in one frame may be detected miss or false, but
+in other frames is correct[12]. To address the miss or false
+detection[13], only when the new object continuously appears
+in the next 5 frames should it be counted.
+IV. EXPERIMENTAL RESULTS
+A. The datasets of underwater image
+For task of object detection based on CNNs, datasets are
+very important and necessary. There are lots of famous datasets,
+such as ImageNet[14], COCO[15], PASCAL VOC[16] and
+so on. These datasets usually include the category of common
+objects, for instance, dog, cat, vehicle and people. However, the
+seafood objects are seldom covered in it. It is disadvantageous
+to detection of marine objects. Thus, It is of great importance
+to build a dataset of underwater image. So we build a dataset
+of underwater images by ourselves.
+Nowadays, our underwater image dataset is mainly including
+28,000 pictures and three categories: sea cucumber, sea
+urchin, and scallop. The images are captured by our integrated
+underwater robot in naturalistic ocean environment. In order
+to improving the multiplicity of the dataset, we augment
+the underwater by doing mirror transformation and image
+enhancement for some pictures.
+B. Training and testing our model
+In order to adapt marine environment of ocean, we train
+and test our model on our underwater image dataset, which
+are captured by our integrated underwater robot. We compiled
+the results in Table 1 using a Nvidia GeForce GTX 1080 Ti
+GPU and cuDNN v5.1 and an Intel Core i7-6700K@4.00GHz.
+Whats more, We have separately trained two network models
+Faster R-CNN ZF and VGG-16. In fact, VGG-16 model is
+more complicated than ZF. From the results of experiment,
+the mAP of VGG-16 model is higher than ZF.
+Authorized licensed use limited to: Harbin Engineering Univ Library. Downloaded on October 20,2023 at 11:34:13 UTC from IEEE Xplore. Restrictions apply.
+TABLE I. DETECTION RESULTS ON OUR DATASET
+Network mAP
+Faster R-CNN ZF 71.3
+Faster R-CNN VGG-16 79.6
+C. Tracking and counting the object
+After training our detector, it is supposed to initialize the
+KCF tracker by parameters produced from detection stage.
+Then we track the object from frames. With the foundation of
+aforementioned work, we can distinguish whether the detected
+object and the tracked object are the same one or not.In the
+following work, it is possible to count the seafood object. And
+the examples of the experimental results are displayed in Fig.2.
+As is shown in Fig.2, image (b) is one of 5 frames adjacent to
+image (a). From (a) to (d), the number of scallop is increasing
+up to fifteen. In (d), all of the seafood except the three new
+scallops are same as (a). Only the number of scallop is varied
+from 12 to 15, and the number of sea cucumber and sea urchin
+remain unchanged.
+The experimental results show that our method has a good
+performance on detection and counting of marine small target.
+It is of great significance to figure out the density of seafood.
+D. Applying the method to the underwater robot
+After experiment, we have applied the method proposed
+in this paper to our underwater robot. As is shown in Fig.3,
+the underwater robot is responsible for capturing video from
+ocean. Meanwhile, the video is transferred from the robot to
+computer by video capture card. Then our algorithm detect
+frames in video to produce categories and locations of the
+object in real time.
+V. CONCLUSION
+This paper proposed a novel method using Faster R-CNN
+and KCF tracking algorithm to detect marine objects. Firstly,
+we train a detector on our underwater dataset to produce the
+bounding boxes and the categories of the object. Then we train
+a tracker based on the KCF to track and count the object.
+Finally, the whole method is adopted to detect marine objects
+using underwater robot vision in real time.
+In the future work, we plan to test other popular object
+detection model, for instance YOLO and SSD. In addition, we
+will continue to expand our underwater dataset.
